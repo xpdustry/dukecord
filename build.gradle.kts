@@ -20,7 +20,10 @@ repositories {
 }
 
 dependencies {
+    implementation("com.grack:nanojson:1.10")
+
     compileOnlyApi("org.slf4j:slf4j-api:2.0.18")
+    implementation("org.slf4j:slf4j-simple:2.0.18") // TODO Replace with System.Logger?
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.18")
 
     compileOnlyApi("org.jspecify:jspecify:1.0.0")
