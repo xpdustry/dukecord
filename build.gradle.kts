@@ -47,7 +47,7 @@ configure<IndraExtension> {
     publishSnapshotsTo("xpdustry", "https://maven.xpdustry.com/snapshots")
     publishReleasesTo("xpdustry", "https://maven.xpdustry.com/releases")
 
-    gpl3OnlyLicense()
+    apache2License()
 
     github("xpdustry", "dukecord") {
         ci(true)
