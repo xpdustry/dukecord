@@ -1,0 +1,41 @@
+## Java
+*.class
+*.jar
+*.war
+*.rar
+*.nar
+*.ear
+*.zip
+*.tar.gz
+hs_err_pid*
+replay_pid*
+
+## Kotlin
+.kotlin/
+
+## Gradle
+**/.gradle
+**/build/
+!src/**/build/
+!gradle-wrapper.jar
+
+## Intellij
+.idea/
+*.ipr
+*.iws
+*.iml
+
+## VSCode
+.vscode/
+
+## Eclipse
+bin/
+.metadata/
+.settings/
+.classpath
+.project
+.loadpath
+
+## OS Specific
+.DS_Store
+Thumbs.db
