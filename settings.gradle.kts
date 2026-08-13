@@ -1,1 +1,1 @@
-rootProject.name = "jacord"
+rootProject.name = "dukecord"

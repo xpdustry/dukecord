@@ -60,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: artifacts
-          path: "build/libs/jacord.jar"
+          path: "build/libs/dukecord.jar"
           if-no-files-found: error
 
       - name: "Upload Test Results"

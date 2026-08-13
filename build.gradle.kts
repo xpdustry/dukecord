@@ -49,7 +49,7 @@ configure<IndraExtension> {
 
     gpl3OnlyLicense()
 
-    github("xpdustry", "jacord") {
+    github("xpdustry", "dukecord") {
         ci(true)
         issues(true)
         scm(true)
@@ -97,7 +97,7 @@ signing {
 }
 
 tasks.jar {
-    archiveFileName = "jacord.jar"
+    archiveFileName = "dukecord.jar"
 }
 
 tasks.withType<RequireClean> {
