@@ -7,8 +7,12 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.net.http.WebSocket;
 import java.time.Duration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CancellationException;
@@ -22,10 +26,77 @@ import org.jspecify.annotations.Nullable;
 
 public final class JdkDukecordHttpClient implements DukecordHttpClient {
 
+    private static final URI DISCORD_API_ENDPOINT = URI.create("https://discord.com/api/v10/");
+
     private final HttpClient client;
+    private final URI endpoint;
 
     public JdkDukecordHttpClient(final HttpClient client) {
+        this(client, DISCORD_API_ENDPOINT);
+    }
+
+    JdkDukecordHttpClient(final HttpClient client, final URI endpoint) {
         this.client = Objects.requireNonNull(client, "client");
+        this.endpoint = Objects.requireNonNull(endpoint, "endpoint");
+    }
+
+    @Override
+    public RequestBuilder newRequest(final DiscordHttpPath path) {
+        Objects.requireNonNull(path, "path");
+        return new RequestBuilder() {
+
+            private final HttpRequest.Builder builder = HttpRequest.newBuilder();
+            private final Map<String, String> bindings = new LinkedHashMap<>();
+            private final Map<String, String> parameters = new LinkedHashMap<>();
+            private HttpRequest.BodyPublisher publisher = HttpRequest.BodyPublishers.noBody();
+
+            @Override
+            public RequestBuilder withPathBinding(final String placeholder, final String value) {
+                this.bindings.put(
+                        Objects.requireNonNull(placeholder, "placeholder"), Objects.requireNonNull(value, "value"));
+                return this;
+            }
+
+            @Override
+            public RequestBuilder withQueryParam(final String name, final String value) {
+                this.parameters.put(Objects.requireNonNull(name, "name"), Objects.requireNonNull(value, "value"));
+                return this;
+            }
+
+            @Override
+            public RequestBuilder withBodyPublisher(final HttpRequest.BodyPublisher publisher) {
+                this.publisher = Objects.requireNonNull(publisher, "publisher");
+                return this;
+            }
+
+            @Override
+            public <T> T execute(final HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException {
+                Objects.requireNonNull(handler, "handler");
+                final var uri = new URIBuilder(JdkDukecordHttpClient.this.endpoint);
+                for (final var segment : path.segments()) {
+                    final String value;
+                    if (segment.placeholder()) {
+                        value = this.bindings.get(segment.name());
+                        if (value == null) {
+                            throw new IllegalStateException("Missing path binding for placeholder " + segment.name());
+                        }
+                    } else {
+                        value = segment.name();
+                    }
+                    uri.addPathSegment(value);
+                }
+                this.parameters.forEach(uri::addParameter);
+                final var request = this.builder
+                        .uri(uri.build())
+                        .method(path.method().name(), this.publisher)
+                        .build();
+                final var response = JdkDukecordHttpClient.this.client.send(request, handler);
+                if (response.statusCode() < 200 || response.statusCode() > 299) {
+                    throw new IOException("Received unexpected status code " + response.statusCode());
+                }
+                return JdkDukecordHttpClient.this.client.send(request, handler).body();
+            }
+        };
     }
 
     @Override

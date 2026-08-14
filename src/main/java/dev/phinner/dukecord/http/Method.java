@@ -2,7 +2,10 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.http;
 
-public final class Request<T> {
-
-    // private final List<String> path;
+public enum Method {
+    POST,
+    PUT,
+    GET,
+    PATCH,
+    DELETE
 }

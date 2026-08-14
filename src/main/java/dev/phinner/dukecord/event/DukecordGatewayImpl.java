@@ -6,15 +6,13 @@ import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 import com.grack.nanojson.JsonParserException;
 import com.grack.nanojson.JsonWriter;
+import dev.phinner.dukecord.http.DiscordHttpPath;
 import dev.phinner.dukecord.http.DukecordHttpClient;
-import dev.phinner.dukecord.http.JdkDukecordHttpClient;
 import dev.phinner.dukecord.http.RateLimiter;
 import dev.phinner.dukecord.http.URIBuilder;
 import dev.phinner.dukecord.util.Exceptions;
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
@@ -32,7 +30,6 @@ import org.slf4j.LoggerFactory;
 
 public class DukecordGatewayImpl implements DukecordGateway {
 
-    private static final URI DISCORD_API_ENDPOINT = URI.create("https://discord.com/api/v10/");
     private static final Logger log = LoggerFactory.getLogger(DukecordGatewayImpl.class);
 
     private static final int NORMAL_CLOSURE = 1000;
@@ -53,8 +50,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
 
     private static final int CLIENT_RECONNECT = 4900; // TODO Like JDA's
 
-    private final HttpClient http;
-    private final DukecordHttpClient myHttp;
+    private final DukecordHttpClient http;
     private final String token;
     private final GatewayIntentSet intents;
     private final RateLimiter connectionLimiter =
@@ -71,9 +67,8 @@ public class DukecordGatewayImpl implements DukecordGateway {
     private final ExecutorService dispatcher = Executors.newVirtualThreadPerTaskExecutor();
     private final DiscordEventPublisherImpl publisher = new DiscordEventPublisherImpl(this.dispatcher);
 
-    public DukecordGatewayImpl(final HttpClient http, final String token, final GatewayIntentSet intents) {
+    public DukecordGatewayImpl(final DukecordHttpClient http, final String token, final GatewayIntentSet intents) {
         this.http = http;
-        this.myHttp = new JdkDukecordHttpClient(http);
         this.token = token;
         this.intents = intents;
     }
@@ -135,7 +130,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
                 if (this.session != null) {
                     try {
 
-                        websocket = this.myHttp.websocket(this.session.gateway, 10, TimeUnit.SECONDS);
+                        websocket = this.http.websocket(this.session.gateway, 10, TimeUnit.SECONDS);
 
                     } catch (final IOException e) {
                         log.warn("Failed to connect using the current session, resetting.", e);
@@ -147,7 +142,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
                     try {
                         final var endpoint = this.fetchGatewayEndpoint();
 
-                        websocket = this.myHttp.websocket(endpoint, 10, TimeUnit.SECONDS);
+                        websocket = this.http.websocket(endpoint, 10, TimeUnit.SECONDS);
 
                     } catch (final IOException e) {
                         log.warn("Failed to connect to the discord gateway", e);
@@ -350,19 +345,11 @@ public class DukecordGatewayImpl implements DukecordGateway {
     }
 
     private URI fetchGatewayEndpoint() throws IOException, InterruptedException {
-        final var response = this.http.send(
-                HttpRequest.newBuilder(new URIBuilder(DISCORD_API_ENDPOINT)
-                                .addPathSegment("gateway")
-                                .build())
-                        .build(),
-                HttpResponse.BodyHandlers.ofString());
-        if (response.statusCode() != 200) {
-            throw new IOException("Unexpected HTTP status code (status-code=%d, body=%s)"
-                    .formatted(response.statusCode(), response.body()));
-        }
+        final var response =
+                this.http.newRequest(DiscordHttpPath.GATEWAY).execute(HttpResponse.BodyHandlers.ofString());
         try {
             return this.withGatewayParameters(
-                    URI.create(JsonParser.object().from(response.body()).getString("url")));
+                    URI.create(JsonParser.object().from(response).getString("url")));
         } catch (final JsonParserException e) {
             throw new IOException("Failed to parse Discord gateway response", e);
         }

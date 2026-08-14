@@ -6,14 +6,14 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public final class URIBuilder {
 
     private final List<String> path = new ArrayList<>();
-    private final Map<String, String> parameters = new HashMap<>();
+    private final Map<String, String> parameters = new LinkedHashMap<>();
     private final URI base;
 
     public URIBuilder(final String base) {

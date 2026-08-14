@@ -4,13 +4,29 @@ package dev.phinner.dukecord.http;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
 import org.jspecify.annotations.Nullable;
 
 public interface DukecordHttpClient {
 
+    RequestBuilder newRequest(final DiscordHttpPath path);
+
     Websocket websocket(final URI endpoint, final long timeout, final TimeUnit unit)
             throws IOException, InterruptedException;
+
+    interface RequestBuilder {
+
+        RequestBuilder withPathBinding(final String placeholder, final String value);
+
+        RequestBuilder withQueryParam(final String name, final String value);
+
+        RequestBuilder withBodyPublisher(final HttpRequest.BodyPublisher publisher);
+
+        // TODO Implement handlers per http code
+        <T> T execute(final HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException;
+    }
 
     interface Websocket {
 
