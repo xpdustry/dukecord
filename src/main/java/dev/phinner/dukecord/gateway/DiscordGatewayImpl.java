@@ -1,17 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 phinner
-package dev.phinner.dukecord.event;
+package dev.phinner.dukecord.gateway;
 
 import com.grack.nanojson.JsonObject;
 import com.grack.nanojson.JsonParser;
 import com.grack.nanojson.JsonParserException;
 import com.grack.nanojson.JsonWriter;
+import dev.phinner.dukecord.http.DiscordHttpClient;
 import dev.phinner.dukecord.http.DiscordHttpPath;
-import dev.phinner.dukecord.http.DukecordHttpClient;
 import dev.phinner.dukecord.http.RateLimiter;
 import dev.phinner.dukecord.http.URIBuilder;
 import dev.phinner.dukecord.util.Exceptions;
 import java.io.IOException;
+import java.io.InterruptedIOException;
 import java.net.URI;
 import java.net.http.HttpResponse;
 import java.time.Duration;
@@ -28,9 +29,9 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DukecordGatewayImpl implements DukecordGateway {
+public class DiscordGatewayImpl implements DiscordGateway {
 
-    private static final Logger log = LoggerFactory.getLogger(DukecordGatewayImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(DiscordGatewayImpl.class);
 
     private static final int NORMAL_CLOSURE = 1000;
     private static final int UNKNOWN_ERROR = 4000;
@@ -50,9 +51,10 @@ public class DukecordGatewayImpl implements DukecordGateway {
 
     private static final int CLIENT_RECONNECT = 4900; // TODO Like JDA's
 
-    private final DukecordHttpClient http;
+    private final DiscordHttpClient http;
     private final String token;
     private final GatewayIntentSet intents;
+    private final Duration timeout;
     private final RateLimiter connectionLimiter =
             RateLimiter.ofExponential(Duration.ofSeconds(5L), Duration.ofMinutes(1));
 
@@ -65,49 +67,54 @@ public class DukecordGatewayImpl implements DukecordGateway {
     private final CompletableFuture<@Nullable Void> closeFuture = new CompletableFuture<>();
 
     private final ExecutorService dispatcher = Executors.newVirtualThreadPerTaskExecutor();
-    private final DiscordEventPublisherImpl publisher = new DiscordEventPublisherImpl(this.dispatcher);
+    private final DiscordEventDispatcher publisher = new DiscordEventDispatcher(this.dispatcher);
 
-    public DukecordGatewayImpl(final DukecordHttpClient http, final String token, final GatewayIntentSet intents) {
+    public DiscordGatewayImpl(
+            final DiscordHttpClient http, final String token, final GatewayIntentSet intents, final Duration timeout) {
         this.http = http;
         this.token = token;
         this.intents = intents;
+        this.timeout = timeout;
     }
 
     @Override
-    public void start(final long timeout, final TimeUnit unit) throws IOException, InterruptedException {
-
+    public void start() throws IOException {
         this.loop.start();
         var succeeded = false;
         try {
-            this.startFuture.get(timeout, unit);
+            this.startFuture.get(this.timeout.toMillis(), TimeUnit.MILLISECONDS);
+            succeeded = true;
         } catch (final ExecutionException e) {
-            throw Exceptions.asIOException("Failed to close WebSocket", e.getCause());
+            throw Exceptions.asIOException("Failed to start WebSocket", e.getCause());
         } catch (final CancellationException | TimeoutException e) {
-            throw new IOException("Failed to close WebSocket", e);
+            throw new IOException("Failed to start WebSocket", e);
+        } catch (final InterruptedException e) {
+            throw new InterruptedIOException();
         } finally {
             if (!succeeded) this.loop.interrupt();
         }
     }
 
     @Override
-    public void close(final long timeout, final TimeUnit unit) throws IOException, InterruptedException {
-
+    public void close() throws IOException {
         this.closed = true;
         var succeeded = false;
         try {
-            this.closeFuture.get(timeout, TimeUnit.SECONDS);
+            this.closeFuture.get(this.timeout.toMillis(), TimeUnit.MILLISECONDS);
             succeeded = true;
         } catch (final ExecutionException e) {
             throw Exceptions.asIOException("Failed to close WebSocket", e.getCause());
         } catch (final CancellationException | TimeoutException e) {
             throw new IOException("Failed to close WebSocket", e);
+        } catch (final InterruptedException e) {
+            throw new InterruptedIOException();
         } finally {
             if (!succeeded) this.loop.interrupt();
         }
     }
 
     @Override
-    public DiscordEventPublisher events() {
+    public DiscordEventSource events() {
         return this.publisher;
     }
 
@@ -126,11 +133,11 @@ public class DukecordGatewayImpl implements DukecordGateway {
         while (!this.closed) {
 
             try {
-                DukecordHttpClient.Websocket websocket = null;
+                DiscordHttpClient.Websocket websocket = null;
                 if (this.session != null) {
                     try {
 
-                        websocket = this.http.websocket(this.session.gateway, 10, TimeUnit.SECONDS);
+                        websocket = this.http.newWebsocket(this.session.gateway, 10, TimeUnit.SECONDS);
 
                     } catch (final IOException e) {
                         log.warn("Failed to connect using the current session, resetting.", e);
@@ -142,7 +149,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
                     try {
                         final var endpoint = this.fetchGatewayEndpoint();
 
-                        websocket = this.http.websocket(endpoint, 10, TimeUnit.SECONDS);
+                        websocket = this.http.newWebsocket(endpoint, 10, TimeUnit.SECONDS);
 
                     } catch (final IOException e) {
                         log.warn("Failed to connect to the discord gateway", e);
@@ -158,7 +165,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
                 while (!this.closed && !websocket.closed()) {
                     final var event = websocket.poll(10, TimeUnit.MILLISECONDS); // TODO Use adjustable frequency
                     switch (event) {
-                        case DukecordHttpClient.Websocket.Event.TextData(var payload) -> {
+                        case DiscordHttpClient.Websocket.Event.TextData(var payload) -> {
                             final JsonObject json;
                             try {
                                 json = JsonParser.object().from(payload);
@@ -171,7 +178,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
                         case null -> {
                             this.onEventLoop(null, websocket);
                         }
-                        case DukecordHttpClient.Websocket.Event.Close(var code, var reason) -> {
+                        case DiscordHttpClient.Websocket.Event.Close(var code, var reason) -> {
                             switch (code) {
                                 // Recoverable
                                 case SESSION_TIMED_OUT, INVALID_SEQ -> {
@@ -208,7 +215,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
                             }
                         }
 
-                        case DukecordHttpClient.Websocket.Event.Error(var e) -> {
+                        case DiscordHttpClient.Websocket.Event.Error(var e) -> {
                             log.info(e.getClass().getName());
 
                             log.error("An unexpected error occurred within the websocket", e);
@@ -238,7 +245,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
         this.closeFuture.complete(null);
     }
 
-    private void onEventLoop(final @Nullable JsonObject event, final DukecordHttpClient.Websocket websocket)
+    private void onEventLoop(final @Nullable JsonObject event, final DiscordHttpClient.Websocket websocket)
             throws IOException, InterruptedException {
         if (this.heartbeat.nextBeat.isBefore(Instant.now())) {
             if (this.heartbeat.acked) {
@@ -325,7 +332,7 @@ public class DukecordGatewayImpl implements DukecordGateway {
                                 this.withGatewayParameters(URI.create(data.getString("resume_gateway_url"))));
                     }
                 }
-                publisher.publish(new UnknownDiscordEvent(type, data));
+                publisher.dispatch(new UnknownDiscordEvent(type, data));
                 log.debug("Received dispatch event: {}", type);
             }
             case RECONNECT -> {
@@ -370,13 +377,13 @@ public class DukecordGatewayImpl implements DukecordGateway {
 
     record HeartbeatState(Duration interval, Instant nextBeat, boolean acked) {
 
-        public HeartbeatState beat(final DukecordHttpClient.Websocket websocket, final @Nullable SessionState session)
+        public HeartbeatState beat(final DiscordHttpClient.Websocket websocket, final @Nullable SessionState session)
                 throws IOException, InterruptedException {
             this.send(websocket, session);
             return new HeartbeatState(this.interval, Instant.now().plus(this.interval), false);
         }
 
-        private void send(final DukecordHttpClient.Websocket websocket, final @Nullable SessionState session)
+        private void send(final DiscordHttpClient.Websocket websocket, final @Nullable SessionState session)
                 throws IOException, InterruptedException {
             final var writer = JsonWriter.string().object().value("op", GatewayOpcode.HEARTBEAT.code());
             if (session == null) {

@@ -1,4 +1,4 @@
 @NullMarked
-package dev.phinner.dukecord.event;
+package dev.phinner.dukecord.gateway;
 
 import org.jspecify.annotations.NullMarked;

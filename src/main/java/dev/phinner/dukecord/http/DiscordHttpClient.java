@@ -9,11 +9,11 @@ import java.net.http.HttpResponse;
 import java.util.concurrent.TimeUnit;
 import org.jspecify.annotations.Nullable;
 
-public interface DukecordHttpClient {
+public interface DiscordHttpClient {
 
     RequestBuilder newRequest(final DiscordHttpPath path);
 
-    Websocket websocket(final URI endpoint, final long timeout, final TimeUnit unit)
+    Websocket newWebsocket(final URI endpoint, final long timeout, final TimeUnit unit)
             throws IOException, InterruptedException;
 
     interface RequestBuilder {

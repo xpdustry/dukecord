@@ -24,18 +24,18 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.jspecify.annotations.Nullable;
 
-public final class JdkDukecordHttpClient implements DukecordHttpClient {
+public final class JdkDiscordHttpClient implements DiscordHttpClient {
 
     private static final URI DISCORD_API_ENDPOINT = URI.create("https://discord.com/api/v10/");
 
     private final HttpClient client;
     private final URI endpoint;
 
-    public JdkDukecordHttpClient(final HttpClient client) {
+    public JdkDiscordHttpClient(final HttpClient client) {
         this(client, DISCORD_API_ENDPOINT);
     }
 
-    JdkDukecordHttpClient(final HttpClient client, final URI endpoint) {
+    JdkDiscordHttpClient(final HttpClient client, final URI endpoint) {
         this.client = Objects.requireNonNull(client, "client");
         this.endpoint = Objects.requireNonNull(endpoint, "endpoint");
     }
@@ -72,7 +72,7 @@ public final class JdkDukecordHttpClient implements DukecordHttpClient {
             @Override
             public <T> T execute(final HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException {
                 Objects.requireNonNull(handler, "handler");
-                final var uri = new URIBuilder(JdkDukecordHttpClient.this.endpoint);
+                final var uri = new URIBuilder(JdkDiscordHttpClient.this.endpoint);
                 for (final var segment : path.segments()) {
                     final String value;
                     if (segment.placeholder()) {
@@ -90,17 +90,17 @@ public final class JdkDukecordHttpClient implements DukecordHttpClient {
                         .uri(uri.build())
                         .method(path.method().name(), this.publisher)
                         .build();
-                final var response = JdkDukecordHttpClient.this.client.send(request, handler);
+                final var response = JdkDiscordHttpClient.this.client.send(request, handler);
                 if (response.statusCode() < 200 || response.statusCode() > 299) {
                     throw new IOException("Received unexpected status code " + response.statusCode());
                 }
-                return JdkDukecordHttpClient.this.client.send(request, handler).body();
+                return JdkDiscordHttpClient.this.client.send(request, handler).body();
             }
         };
     }
 
     @Override
-    public Websocket websocket(final URI endpoint, final long timeout, final TimeUnit unit)
+    public Websocket newWebsocket(final URI endpoint, final long timeout, final TimeUnit unit)
             throws IOException, InterruptedException {
         final var websocket = new JdkWebsocket();
         try {
@@ -172,7 +172,6 @@ public final class JdkDukecordHttpClient implements DukecordHttpClient {
 
         @Override
         public @Nullable Event poll(final long timeout, final TimeUnit unit) throws InterruptedException {
-            // TODO throw illegal state when empty and closed?
             return this.events.poll(timeout, unit);
         }
 

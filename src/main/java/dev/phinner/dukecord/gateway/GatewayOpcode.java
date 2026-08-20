@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 phinner
-package dev.phinner.dukecord.event;
+package dev.phinner.dukecord.gateway;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -21,12 +21,12 @@ public enum GatewayOpcode {
     HEARTBEAT_ACK(11),
     REQUEST_CHANNEL_INFO(43);
 
-    private static final Map<Integer, GatewayOpcode> reversed;
+    private static final Map<Integer, GatewayOpcode> REVERSED;
 
     private final int code;
 
     static {
-        reversed =
+        REVERSED =
                 Arrays.stream(values()).collect(Collectors.toUnmodifiableMap(GatewayOpcode::code, Function.identity()));
     }
 
@@ -35,7 +35,7 @@ public enum GatewayOpcode {
     }
 
     public static Optional<GatewayOpcode> from(final int code) {
-        return Optional.ofNullable(reversed.get(code));
+        return Optional.ofNullable(REVERSED.get(code));
     }
 
     /**
