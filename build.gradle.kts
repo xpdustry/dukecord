@@ -20,21 +20,16 @@ repositories {
 }
 
 dependencies {
+    api("tools.jackson.core:jackson-databind:3.1.4")
     implementation("com.grack:nanojson:1.10")
 
-    compileOnly("org.immutables:value-annotations:2.11.6")
-    annotationProcessor("org.immutables:value:2.11.6")
+    compileOnly("org.immutables:value-annotations:2.12.2")
+    annotationProcessor("org.immutables:value:2.12.2")
 
     compileOnlyApi("org.slf4j:slf4j-api:2.0.18")
     implementation("org.slf4j:slf4j-simple:2.0.18") // TODO Replace with System.Logger?
-    testRuntimeOnly("org.slf4j:slf4j-simple:2.0.18")
 
     compileOnlyApi("org.jspecify:jspecify:1.0.0")
-
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.1")
-    testImplementation("org.junit.vintage:junit-vintage-engine:6.0.1")
-    testImplementation("org.assertj:assertj-core:3.27.7")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     errorprone("com.google.errorprone:error_prone_core:2.49.0")
     errorprone("com.uber.nullaway:nullaway:0.13.4")

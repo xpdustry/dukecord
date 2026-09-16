@@ -2,11 +2,16 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.channel;
 
+import dev.phinner.dukecord.model.user.ImmutableUser;
 import dev.phinner.dukecord.model.user.User;
 import java.util.List;
+import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
+@Value.Immutable
+@JsonDeserialize(as = ImmutableDmChannel.class)
 public non-sealed interface DmChannel extends MessageChannel {
 
-    /** The other participants; may be empty when the channel came from a message payload. */
+    @JsonDeserialize(contentAs = ImmutableUser.class)
     List<User> recipients();
 }

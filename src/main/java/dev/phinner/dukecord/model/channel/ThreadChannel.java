@@ -2,32 +2,23 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.channel;
 
-import dev.phinner.dukecord.model.DiscordEntityRef;
-import dev.phinner.dukecord.model.guild.Member;
+import dev.phinner.dukecord.model.Snowflake;
+import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
+@Value.Immutable
+@JsonDeserialize(as = ImmutableThreadChannel.class)
 public non-sealed interface ThreadChannel extends GuildChannel, MessageChannel {
 
-    /** The text, announcement or forum channel this thread lives in. */
-    DiscordEntityRef<GuildChannel> parent();
+    Snowflake ownerId();
 
-    DiscordEntityRef<Member> owner();
-
-    ThreadMetadata metadata();
-
-    /** Approximate on the gateway; a hint, not a count. */
-    int messageCount();
-
-    /** Capped at 50 by Discord; a hint, not a count. */
-    int memberCount();
-
-    /** Whether the bot is a member of this thread, tracked by the cache from thread member events. */
-    boolean isJoined();
-
-    default void join() {
-        this.duke().rest().joinThread(this.id());
+    @Value.Default
+    default int messageCount() {
+        return 0;
     }
 
-    default void leave() {
-        this.duke().rest().leaveThread(this.id());
+    @Value.Default
+    default int memberCount() {
+        return 0;
     }
 }

@@ -3,32 +3,27 @@
 package dev.phinner.dukecord.model.user;
 
 import dev.phinner.dukecord.model.DiscordEntity;
-import dev.phinner.dukecord.model.channel.DmChannel;
 import java.util.Optional;
+import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
+@Value.Immutable
+@JsonDeserialize(as = ImmutableUser.class)
 public interface User extends DiscordEntity {
 
     String username();
 
     Optional<String> globalName();
 
-    Optional<String> avatarHash();
+    Optional<String> avatar();
 
-    /** Absent in the payload means false. */
-    boolean isBot();
-
-    boolean isSystem();
-
-    default String displayName() {
-        return this.globalName().orElseGet(this::username);
+    @Value.Default
+    default boolean bot() {
+        return false;
     }
 
-    default String mention() {
-        return "<@" + this.id() + ">";
-    }
-
-    /** REST: opens (or returns the existing) direct-message channel with this user. */
-    default DmChannel openDm() {
-        return this.duke().rest().openDm(this.id());
+    @Value.Default
+    default boolean system() {
+        return false;
     }
 }

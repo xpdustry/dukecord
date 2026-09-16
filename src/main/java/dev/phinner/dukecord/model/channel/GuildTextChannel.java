@@ -2,16 +2,23 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.channel;
 
-import java.time.Duration;
 import java.util.Optional;
+import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
-/** A guild text or announcement channel; {@link #type()} tells which. */
+@Value.Immutable
+@JsonDeserialize(as = ImmutableGuildTextChannel.class)
 public non-sealed interface GuildTextChannel extends GuildChannel, MessageChannel {
 
     Optional<String> topic();
 
-    boolean isNsfw();
+    @Value.Default
+    default boolean nsfw() {
+        return false;
+    }
 
-    /** The slowmode delay, {@link Duration#ZERO} when off. */
-    Duration rateLimitPerUser();
+    @Value.Default
+    default int rateLimitPerUser() {
+        return 0;
+    }
 }

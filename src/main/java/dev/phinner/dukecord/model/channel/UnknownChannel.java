@@ -2,5 +2,9 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.channel;
 
-/** A channel of a type this library does not model and that is not guild-bound; use {@code raw()}. */
+import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
+
+@Value.Immutable
+@JsonDeserialize(as = ImmutableUnknownChannel.class)
 public non-sealed interface UnknownChannel extends Channel {}
