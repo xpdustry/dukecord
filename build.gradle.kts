@@ -22,6 +22,9 @@ repositories {
 dependencies {
     implementation("com.grack:nanojson:1.10")
 
+    compileOnly("org.immutables:value-annotations:2.11.6")
+    annotationProcessor("org.immutables:value:2.11.6")
+
     compileOnlyApi("org.slf4j:slf4j-api:2.0.18")
     implementation("org.slf4j:slf4j-simple:2.0.18") // TODO Replace with System.Logger?
     testRuntimeOnly("org.slf4j:slf4j-simple:2.0.18")

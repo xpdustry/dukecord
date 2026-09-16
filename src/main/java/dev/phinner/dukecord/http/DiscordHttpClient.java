@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import org.jspecify.annotations.Nullable;
 
@@ -22,10 +23,20 @@ public interface DiscordHttpClient {
 
         RequestBuilder withQueryParam(final String name, final String value);
 
+        RequestBuilder withHeader(final String name, final String value);
+
         RequestBuilder withBodyPublisher(final HttpRequest.BodyPublisher publisher);
 
-        // TODO Implement handlers per http code
-        <T> T execute(final HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException;
+        <T> Response<T> execute(final HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException;
+    }
+
+    interface Response<T> {
+
+        int getStatusCode();
+
+        T getBody();
+
+        Map<String, String> getHeaders();
     }
 
     interface Websocket {

@@ -9,6 +9,20 @@ import java.util.Objects;
 public final class DiscordHttpPath {
 
     public static final DiscordHttpPath GATEWAY = new DiscordHttpPath(Method.GET, "gateway");
+    public static final DiscordHttpPath SEND_MESSAGE =
+            new DiscordHttpPath(Method.POST, "channels/{channel_id}/messages");
+    public static final DiscordHttpPath EDIT_MESSAGE =
+            new DiscordHttpPath(Method.PATCH, "channels/{channel_id}/messages/{message_id}");
+    public static final DiscordHttpPath GET_MESSAGE =
+            new DiscordHttpPath(Method.GET, "channels/{channel_id}/messages/{message_id}");
+    public static final DiscordHttpPath GET_USER = new DiscordHttpPath(Method.GET, "users/{user_id}");
+    public static final DiscordHttpPath GET_CHANNEL = new DiscordHttpPath(Method.GET, "channels/{channel_id}");
+    public static final DiscordHttpPath GET_GUILD = new DiscordHttpPath(Method.GET, "guilds/{guild_id}");
+    public static final DiscordHttpPath GET_GUILD_CHANNELS =
+            new DiscordHttpPath(Method.GET, "guilds/{guild_id}/channels");
+    public static final DiscordHttpPath GET_GUILD_ROLES = new DiscordHttpPath(Method.GET, "guilds/{guild_id}/roles");
+    public static final DiscordHttpPath GET_GUILD_MEMBER =
+            new DiscordHttpPath(Method.GET, "guilds/{guild_id}/members/{user_id}");
 
     private final Method method;
     private final List<PathSegment> path = new ArrayList<>();

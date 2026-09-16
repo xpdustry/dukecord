@@ -356,7 +356,7 @@ public class DiscordGatewayImpl implements DiscordGateway {
                 this.http.newRequest(DiscordHttpPath.GATEWAY).execute(HttpResponse.BodyHandlers.ofString());
         try {
             return this.withGatewayParameters(
-                    URI.create(JsonParser.object().from(response).getString("url")));
+                    URI.create(JsonParser.object().from(response.getBody()).getString("url")));
         } catch (final JsonParserException e) {
             throw new IOException("Failed to parse Discord gateway response", e);
         }

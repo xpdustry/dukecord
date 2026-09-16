@@ -22,6 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import org.jspecify.annotations.Nullable;
 
 public final class JdkDiscordHttpClient implements DiscordHttpClient {
@@ -64,13 +65,20 @@ public final class JdkDiscordHttpClient implements DiscordHttpClient {
             }
 
             @Override
+            public RequestBuilder withHeader(final String name, final String value) {
+                this.builder.header(Objects.requireNonNull(name, "name"), Objects.requireNonNull(value, "value"));
+                return this;
+            }
+
+            @Override
             public RequestBuilder withBodyPublisher(final HttpRequest.BodyPublisher publisher) {
                 this.publisher = Objects.requireNonNull(publisher, "publisher");
                 return this;
             }
 
             @Override
-            public <T> T execute(final HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException {
+            public <T> Response<T> execute(final HttpResponse.BodyHandler<T> handler)
+                    throws IOException, InterruptedException {
                 Objects.requireNonNull(handler, "handler");
                 final var uri = new URIBuilder(JdkDiscordHttpClient.this.endpoint);
                 for (final var segment : path.segments()) {
@@ -92,11 +100,32 @@ public final class JdkDiscordHttpClient implements DiscordHttpClient {
                         .build();
                 final var response = JdkDiscordHttpClient.this.client.send(request, handler);
                 if (response.statusCode() < 200 || response.statusCode() > 299) {
-                    throw new IOException("Received unexpected status code " + response.statusCode());
+                    throw new DiscordHttpException(response.statusCode());
                 }
-                return JdkDiscordHttpClient.this.client.send(request, handler).body();
+                final var headers = response.headers().map().entrySet().stream()
+                        .collect(Collectors.toUnmodifiableMap(
+                                Map.Entry::getKey, entry -> String.join(",", entry.getValue())));
+                return new JdkResponse<>(response.statusCode(), response.body(), headers);
             }
         };
+    }
+
+    private record JdkResponse<T>(int statusCode, T body, Map<String, String> headers) implements Response<T> {
+
+        @Override
+        public int getStatusCode() {
+            return this.statusCode;
+        }
+
+        @Override
+        public T getBody() {
+            return this.body;
+        }
+
+        @Override
+        public Map<String, String> getHeaders() {
+            return this.headers;
+        }
     }
 
     @Override
