@@ -2,7 +2,9 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.channel;
 
-import dev.phinner.dukecord.model.Snowflake;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.phinner.dukecord.model.user.User;
+import dev.phinner.dukecord.store.DiscordEntityRef;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -10,7 +12,8 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableThreadChannel.class)
 public non-sealed interface ThreadChannel extends GuildChannel, MessageChannel {
 
-    Snowflake ownerId();
+    @JsonProperty("owner_id")
+    DiscordEntityRef<User> owner();
 
     @Value.Default
     default int messageCount() {

@@ -2,10 +2,14 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.message;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.phinner.dukecord.model.DiscordEntity;
 import dev.phinner.dukecord.model.Snowflake;
+import dev.phinner.dukecord.model.channel.Channel;
+import dev.phinner.dukecord.model.guild.Guild;
 import dev.phinner.dukecord.model.user.ImmutableUser;
 import dev.phinner.dukecord.model.user.User;
+import dev.phinner.dukecord.store.DiscordEntityRef;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +20,11 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableMessage.class)
 public interface Message extends DiscordEntity {
 
-    Snowflake channelId();
+    @JsonProperty("channel_id")
+    DiscordEntityRef<Channel> channel();
 
-    Optional<Snowflake> guildId();
+    @JsonProperty("guild_id")
+    Optional<DiscordEntityRef<Guild>> guild();
 
     @JsonDeserialize(as = ImmutableUser.class)
     User author();
@@ -56,11 +62,4 @@ public interface Message extends DiscordEntity {
 
     @JsonDeserialize(contentAs = ImmutableUser.class)
     List<User> mentions();
-
-    List<Snowflake> mentionRoles();
-
-    @Value.Default
-    default boolean mentionEveryone() {
-        return false;
-    }
 }

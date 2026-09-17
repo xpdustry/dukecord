@@ -2,13 +2,16 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.channel;
 
-import dev.phinner.dukecord.model.Snowflake;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.phinner.dukecord.model.guild.Guild;
+import dev.phinner.dukecord.store.DiscordEntityRef;
 import java.util.Optional;
 import org.immutables.value.Value;
 
 public sealed interface GuildChannel extends Channel permits CategoryChannel, GuildTextChannel, ThreadChannel {
 
-    Snowflake guildId();
+    @JsonProperty("guild_id")
+    DiscordEntityRef<Guild> guild();
 
     @Value.Default
     default String name() {
@@ -20,7 +23,8 @@ public sealed interface GuildChannel extends Channel permits CategoryChannel, Gu
         return 0;
     }
 
-    Optional<Snowflake> parentId();
+    @JsonProperty("parent_id")
+    Optional<DiscordEntityRef<Channel>> parent();
 
     @Value.Default
     default int flags() {

@@ -2,8 +2,10 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.model.guild;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.phinner.dukecord.model.DiscordEntity;
-import dev.phinner.dukecord.model.Snowflake;
+import dev.phinner.dukecord.model.user.User;
+import dev.phinner.dukecord.store.DiscordEntityRef;
 import java.util.Optional;
 import java.util.Set;
 import org.immutables.value.Value;
@@ -15,7 +17,8 @@ public interface Guild extends DiscordEntity {
 
     String name();
 
-    Snowflake ownerId();
+    @JsonProperty("owner_id")
+    DiscordEntityRef<User> owner();
 
     Optional<String> description();
 
