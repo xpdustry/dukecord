@@ -26,11 +26,6 @@ public interface Guild extends DiscordEntity {
 
     Set<String> features();
 
-    @Value.Default
-    default boolean unavailable() {
-        return false;
-    }
-
     Optional<Integer> memberCount();
 
     Optional<Integer> premiumSubscriptionCount();

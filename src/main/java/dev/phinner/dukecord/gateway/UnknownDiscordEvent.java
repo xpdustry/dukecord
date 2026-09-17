@@ -2,7 +2,5 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.gateway;
 
-import com.grack.nanojson.JsonObject;
-
-// TODO "payload" should be immutable
-public record UnknownDiscordEvent(String type, JsonObject payload) implements DiscordEvent {}
+/** A gateway dispatch for which Dukecord has no typed event, or whose typed payload could not be decoded. */
+public record UnknownDiscordEvent(String type, String payload) implements DiscordEvent {}

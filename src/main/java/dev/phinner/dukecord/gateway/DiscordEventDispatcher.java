@@ -27,21 +27,23 @@ public final class DiscordEventDispatcher implements DiscordEventSource {
 
     @SuppressWarnings("unchecked")
     public <E extends DiscordEvent> void dispatch(final E event) {
+        final List<DiscordEventListener<? extends DiscordEvent>> listeners = new ArrayList<>();
         synchronized (this.lock) {
             for (final var superclass : this.superclasses(event.getClass())) {
-                for (final var subscriber : this.subscribers.getOrDefault(superclass, List.of())) {
-                    this.dispatcher.execute(() -> {
-                        try {
-                            ((DiscordEventListener<E>) subscriber).onDiscordEvent(event);
-                        } catch (final Exception e) {
-                            log.error(
-                                    "An unhandled exception occurred while dispatching {}",
-                                    event.getClass().getSimpleName(),
-                                    e);
-                        }
-                    });
-                }
+                listeners.addAll(this.subscribers.getOrDefault(superclass, List.of()));
             }
+        }
+        for (final var listener : listeners) {
+            this.dispatcher.execute(() -> {
+                try {
+                    ((DiscordEventListener<E>) listener).onDiscordEvent(event);
+                } catch (final Exception e) {
+                    log.error(
+                            "An unhandled exception occurred while dispatching {}",
+                            event.getClass().getSimpleName(),
+                            e);
+                }
+            });
         }
     }
 
@@ -49,19 +51,13 @@ public final class DiscordEventDispatcher implements DiscordEventSource {
     public <E extends DiscordEvent> DiscordEventListener.Registration register(
             final Class<E> type, final DiscordEventListener<E> subscriber) {
         synchronized (this.lock) {
-            for (final var superclass : this.superclasses(type)) {
-                this.subscribers
-                        .computeIfAbsent(superclass, _ -> new ArrayList<>())
-                        .add(subscriber);
-            }
+            this.subscribers.computeIfAbsent(type, _ -> new ArrayList<>()).add(subscriber);
         }
         return () -> {
             synchronized (this.lock) {
-                for (final var superclass : this.superclasses(type)) {
-                    final var subscribers = this.subscribers.get(superclass);
-                    if (subscribers != null) {
-                        subscribers.remove(subscriber);
-                    }
+                final var subscribers = this.subscribers.get(type);
+                if (subscribers != null) {
+                    subscribers.remove(subscriber);
                 }
             }
         };

@@ -3,7 +3,7 @@
 package dev.phinner.dukecord.gateway;
 
 @FunctionalInterface
-public interface DiscordEventListener<E> {
+public interface DiscordEventListener<E extends DiscordEvent> {
 
     void onDiscordEvent(final E event);
 

@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -55,6 +56,7 @@ public class DiscordGatewayImpl implements DiscordGateway {
     private final String token;
     private final GatewayIntentSet intents;
     private final Duration timeout;
+    private final DiscordDispatchDecoder eventDecoder;
     private final RateLimiter connectionLimiter =
             RateLimiter.ofExponential(Duration.ofSeconds(5L), Duration.ofMinutes(1));
 
@@ -71,10 +73,20 @@ public class DiscordGatewayImpl implements DiscordGateway {
 
     public DiscordGatewayImpl(
             final DiscordHttpClient http, final String token, final GatewayIntentSet intents, final Duration timeout) {
+        this(http, token, intents, timeout, DiscordDispatchDecoder.unknownOnly());
+    }
+
+    public DiscordGatewayImpl(
+            final DiscordHttpClient http,
+            final String token,
+            final GatewayIntentSet intents,
+            final Duration timeout,
+            final DiscordDispatchDecoder eventDecoder) {
         this.http = http;
         this.token = token;
         this.intents = intents;
         this.timeout = timeout;
+        this.eventDecoder = Objects.requireNonNull(eventDecoder);
     }
 
     @Override
@@ -332,7 +344,13 @@ public class DiscordGatewayImpl implements DiscordGateway {
                                 this.withGatewayParameters(URI.create(data.getString("resume_gateway_url"))));
                     }
                 }
-                publisher.dispatch(new UnknownDiscordEvent(type, data));
+                final var payload = JsonWriter.string(data);
+                try {
+                    publisher.dispatch(this.eventDecoder.decode(type, payload));
+                } catch (final DiscordEventDecodingException e) {
+                    log.warn("Failed to decode dispatch event {}, publishing its raw payload", type, e);
+                    publisher.dispatch(new UnknownDiscordEvent(type, payload));
+                }
                 log.debug("Received dispatch event: {}", type);
             }
             case RECONNECT -> {
