@@ -2,14 +2,24 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.gateway.events;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.phinner.dukecord.model.Snowflake;
 import java.util.List;
 import java.util.Optional;
+import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
-public record MessageDeleteBulkEvent(List<Snowflake> messageIds, Snowflake channelId, Optional<Snowflake> guildId)
-        implements MessageEvent {
+@Value.Immutable
+@JsonDeserialize(as = ImmutableMessageDeleteBulkEvent.class)
+public interface MessageDeleteBulkEvent extends MessageEvent {
 
-    public MessageDeleteBulkEvent {
-        messageIds = List.copyOf(messageIds);
-    }
+    @JsonProperty("ids")
+    List<Snowflake> messageIds();
+
+    @Override
+    @JsonProperty("channel_id")
+    Snowflake channelId();
+
+    @JsonProperty("guild_id")
+    Optional<Snowflake> guildId();
 }

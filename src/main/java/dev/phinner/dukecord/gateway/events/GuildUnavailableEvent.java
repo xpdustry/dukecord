@@ -2,6 +2,16 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.gateway.events;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.phinner.dukecord.model.Snowflake;
+import org.immutables.value.Value;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
-public record GuildUnavailableEvent(Snowflake guildId) implements GuildEvent {}
+@Value.Immutable
+@JsonDeserialize(as = ImmutableGuildUnavailableEvent.class)
+public interface GuildUnavailableEvent extends GuildEvent, GuildCreatePayload, GuildDeletePayload {
+
+    @Override
+    @JsonProperty("id")
+    Snowflake guildId();
+}

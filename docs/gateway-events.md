@@ -27,17 +27,21 @@ Construction must finish before `gateway.start()` publishes events.
 
 ## Shape
 
-Public event records live in `gateway.events`. Family interfaces contain only shared domain accessors. The dispatcher stores
-registrations under their exact requested type and walks the dispatched event's interface hierarchy once, so concrete and
-family listeners each receive one call.
+Public event interfaces live in `gateway.events`; Immutables generates their implementations. Family interfaces contain only
+shared domain accessors. The dispatcher stores registrations under their exact requested type and walks the dispatched
+event's interface hierarchy once, so concrete and family listeners each receive one call.
 
 `DiscordDispatchDecoder` is the transport-to-domain seam. It accepts the event name and serialized `d` payload, which keeps
-NanoJSON out of the public decoder contract. `DiscordGatewayEvents.decoder(duke)` owns event-name mapping, Jackson context,
-payload validation, and the unknown-event fallback.
+NanoJSON out of the public decoder contract. `DiscordGatewayEvents.decoder(duke)` only maps event names to annotated event
+types and supplies the Jackson context required by entity references. Jackson and Immutables own payload conversion.
 
 Complete payloads become existing entities. Delete events retain their documented IDs. An unavailable guild becomes
 `GuildUnavailableEvent`, never an incomplete `Guild`. `MESSAGE_UPDATE` remains unknown until the model has an immutable patch
 type that distinguishes an omitted field from a JSON null.
+
+Guild, message, and user events use `@JsonUnwrapped` because Discord places the entity fields directly in `d`. Jackson cannot
+unwrap the polymorphic `Channel` interface, so three private channel-event unions select a concrete channel type from `type`
+before unwrapping it. This keeps `event.channel()` polymorphic without handwritten deserializers or public wire DTOs.
 
 Known decode failures throw `DiscordEventDecodingException`. The gateway catches that exception once, logs it, and publishes
 the original payload as `UnknownDiscordEvent`; malformed payloads cannot terminate the websocket loop.
@@ -53,14 +57,18 @@ would receive sibling events and duplicate deliveries.
 
 - The four-argument gateway constructor still emits only unknown events so transport-only use remains possible.
 - Event decoding serializes NanoJSON's `d` object before Jackson reads it; this extra conversion keeps parser types private.
+- Channel create, update, and delete each need five private payload adapters because Jackson cannot combine polymorphic type
+  handling with `@JsonUnwrapped`.
 - Stores are not mutated here. Cache reduction needs write contracts and merge rules that do not exist yet.
 - `UnknownDiscordEvent.payload()` is now an immutable JSON string instead of a mutable `JsonObject`.
 
 ## Alternatives considered
 
 - Giving the gateway a `Dukecord` reference creates a construction cycle and mixes websocket lifecycle with model context.
-- Annotating one Jackson polymorphic event hierarchy makes partial payload handling brittle and leaks wire names into every
-  event type.
+- Duplicating entity fields directly onto event types avoids `@JsonUnwrapped`, but creates a second model that will drift from
+  the canonical entities.
+- A custom channel-event deserializer is smaller than the private adapters, but puts field conversion back into handwritten
+  code.
 - Typing `MESSAGE_UPDATE` as `Message` lies about required fields when Discord sends a partial update.
 
 ## Open questions and risks

@@ -2,24 +2,13 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.gateway.events;
 
-import com.grack.nanojson.JsonArray;
-import com.grack.nanojson.JsonObject;
-import com.grack.nanojson.JsonParser;
-import com.grack.nanojson.JsonParserException;
 import dev.phinner.dukecord.Dukecord;
 import dev.phinner.dukecord.gateway.DiscordDispatchDecoder;
 import dev.phinner.dukecord.gateway.DiscordEvent;
 import dev.phinner.dukecord.gateway.DiscordEventDecodingException;
 import dev.phinner.dukecord.gateway.UnknownDiscordEvent;
 import dev.phinner.dukecord.model.DiscordJson;
-import dev.phinner.dukecord.model.Snowflake;
-import dev.phinner.dukecord.model.channel.Channel;
-import dev.phinner.dukecord.model.guild.Guild;
-import dev.phinner.dukecord.model.message.Message;
-import dev.phinner.dukecord.model.user.User;
-import java.util.ArrayList;
 import java.util.Objects;
-import java.util.Optional;
 
 public final class DiscordGatewayEvents {
 
@@ -31,68 +20,21 @@ public final class DiscordGatewayEvents {
     private static DiscordEvent decode(final Dukecord duke, final String type, final String payload) {
         try {
             return switch (type) {
-                case "GUILD_CREATE" -> decodeGuildCreate(duke, payload);
-                case "GUILD_UPDATE" -> new GuildUpdateEvent(DiscordJson.read(duke, payload, Guild.class));
-                case "GUILD_DELETE" -> decodeGuildDelete(payload);
-                case "CHANNEL_CREATE" -> new ChannelCreateEvent(DiscordJson.read(duke, payload, Channel.class));
-                case "CHANNEL_UPDATE" -> new ChannelUpdateEvent(DiscordJson.read(duke, payload, Channel.class));
-                case "CHANNEL_DELETE" -> new ChannelDeleteEvent(DiscordJson.read(duke, payload, Channel.class));
-                case "MESSAGE_CREATE" -> new MessageCreateEvent(DiscordJson.read(duke, payload, Message.class));
-                case "MESSAGE_DELETE" -> decodeMessageDelete(payload);
-                case "MESSAGE_DELETE_BULK" -> decodeMessageDeleteBulk(payload);
-                case "USER_UPDATE" -> new UserUpdateEvent(DiscordJson.read(duke, payload, User.class));
+                case "GUILD_CREATE" -> DiscordJson.read(duke, payload, GuildCreatePayload.class);
+                case "GUILD_UPDATE" -> DiscordJson.read(duke, payload, GuildUpdateEvent.class);
+                case "GUILD_DELETE" -> DiscordJson.read(duke, payload, GuildDeletePayload.class);
+                case "CHANNEL_CREATE" -> DiscordJson.read(duke, payload, ChannelCreateEvent.class);
+                case "CHANNEL_UPDATE" -> DiscordJson.read(duke, payload, ChannelUpdateEvent.class);
+                case "CHANNEL_DELETE" -> DiscordJson.read(duke, payload, ChannelDeleteEvent.class);
+                case "MESSAGE_CREATE" -> DiscordJson.read(duke, payload, MessageCreateEvent.class);
+                case "MESSAGE_DELETE" -> DiscordJson.read(duke, payload, MessageDeleteEvent.class);
+                case "MESSAGE_DELETE_BULK" -> DiscordJson.read(duke, payload, MessageDeleteBulkEvent.class);
+                case "USER_UPDATE" -> DiscordJson.read(duke, payload, UserUpdateEvent.class);
                 default -> new UnknownDiscordEvent(type, payload);
             };
-        } catch (final RuntimeException | JsonParserException e) {
+        } catch (final RuntimeException e) {
             throw new DiscordEventDecodingException(type, e);
         }
-    }
-
-    private static DiscordEvent decodeGuildCreate(final Dukecord duke, final String payload)
-            throws JsonParserException {
-        final var data = JsonParser.object().from(payload);
-        if (data.getBoolean("unavailable")) {
-            return new GuildUnavailableEvent(snowflake(data, "id"));
-        }
-        return new GuildCreateEvent(DiscordJson.read(duke, payload, Guild.class));
-    }
-
-    private static DiscordEvent decodeGuildDelete(final String payload) throws JsonParserException {
-        final var data = JsonParser.object().from(payload);
-        final var guildId = snowflake(data, "id");
-        return data.getBoolean("unavailable") ? new GuildUnavailableEvent(guildId) : new GuildDeleteEvent(guildId);
-    }
-
-    private static MessageDeleteEvent decodeMessageDelete(final String payload) throws JsonParserException {
-        final var data = JsonParser.object().from(payload);
-        return new MessageDeleteEvent(
-                snowflake(data, "id"), snowflake(data, "channel_id"), optionalSnowflake(data, "guild_id"));
-    }
-
-    private static MessageDeleteBulkEvent decodeMessageDeleteBulk(final String payload) throws JsonParserException {
-        final var data = JsonParser.object().from(payload);
-        final JsonArray ids = data.getArray("ids");
-        final var messageIds = new ArrayList<Snowflake>(ids.size());
-        for (final var id : ids) {
-            if (!(id instanceof String value)) {
-                throw new IllegalArgumentException("Discord field ids must contain only snowflake strings");
-            }
-            messageIds.add(Snowflake.of(value));
-        }
-        return new MessageDeleteBulkEvent(
-                messageIds, snowflake(data, "channel_id"), optionalSnowflake(data, "guild_id"));
-    }
-
-    private static Snowflake snowflake(final JsonObject data, final String name) {
-        final var value = data.getString(name);
-        if (value == null) {
-            throw new IllegalArgumentException("Missing Discord snowflake field " + name);
-        }
-        return Snowflake.of(value);
-    }
-
-    private static Optional<Snowflake> optionalSnowflake(final JsonObject data, final String name) {
-        return Optional.ofNullable(data.getString(name)).map(Snowflake::of);
     }
 
     private DiscordGatewayEvents() {}
