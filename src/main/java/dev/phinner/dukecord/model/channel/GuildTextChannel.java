@@ -16,9 +16,4 @@ public non-sealed interface GuildTextChannel extends GuildChannel, MessageChanne
     default boolean nsfw() {
         return false;
     }
-
-    @Value.Default
-    default int rateLimitPerUser() {
-        return 0;
-    }
 }

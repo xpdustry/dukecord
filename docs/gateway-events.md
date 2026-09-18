@@ -40,8 +40,10 @@ Complete payloads become existing entities. Delete events retain their documente
 type that distinguishes an omitted field from a JSON null.
 
 Guild, message, and user events use `@JsonUnwrapped` because Discord places the entity fields directly in `d`. Jackson cannot
-unwrap the polymorphic `Channel` interface, so three private channel-event unions select a concrete channel type from `type`
-before unwrapping it. This keeps `event.channel()` polymorphic without handwritten deserializers or public wire DTOs.
+unwrap the polymorphic `Channel` interface, so channel events decode through one shared deserializer that reads the flat
+payload as `Channel` — reusing `Channel`'s own `type` polymorphism — and wraps the result in the requested event. The
+Dukecord-bound reader context flows through the same deserialization context, so entity references inside the channel
+deserialize normally.
 
 Known decode failures throw `DiscordEventDecodingException`. The gateway catches that exception once, logs it, and publishes
 the original payload as `UnknownDiscordEvent`; malformed payloads cannot terminate the websocket loop.
@@ -57,8 +59,8 @@ would receive sibling events and duplicate deliveries.
 
 - The four-argument gateway constructor still emits only unknown events so transport-only use remains possible.
 - Event decoding serializes NanoJSON's `d` object before Jackson reads it; this extra conversion keeps parser types private.
-- Channel create, update, and delete each need five private payload adapters because Jackson cannot combine polymorphic type
-  handling with `@JsonUnwrapped`.
+- Channel create, update, and delete decode through one handwritten deserializer because Jackson 3.1.4 can neither combine
+  polymorphic type handling with `@JsonUnwrapped` nor resolve a polymorphic delegate for a class-level converter.
 - Stores are not mutated here. Cache reduction needs write contracts and merge rules that do not exist yet.
 - `UnknownDiscordEvent.payload()` is now an immutable JSON string instead of a mutable `JsonObject`.
 
@@ -67,8 +69,8 @@ would receive sibling events and duplicate deliveries.
 - Giving the gateway a `Dukecord` reference creates a construction cycle and mixes websocket lifecycle with model context.
 - Duplicating entity fields directly onto event types avoids `@JsonUnwrapped`, but creates a second model that will drift from
   the canonical entities.
-- A custom channel-event deserializer is smaller than the private adapters, but puts field conversion back into handwritten
-  code.
+- Unwrapping the channel fields onto each event subtype was rejected: it duplicated the subtype table on every operation
+  and multiplied five channel variants across create, update, and delete into fifteen private adapters.
 - Typing `MESSAGE_UPDATE` as `Message` lies about required fields when Discord sends a partial update.
 
 ## Open questions and risks

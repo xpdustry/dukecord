@@ -14,9 +14,9 @@ Finish the gateway event refactor with this shape:
 
 ## Current worktree
 
-The branch is based on commit `76c63ea` (`z events`). The event annotation refactor is uncommitted. Run `git status --short` before editing. Preserve all current modifications and untracked event files.
-
-The current implementation compiles and the full Gradle build passes, but the channel solution should be replaced before committing.
+The branch is based on commit `76c63ea` (`z events`). The event annotation refactor, including the channel decode
+replacement, is uncommitted. Run `git status --short` before editing. Preserve all current modifications and untracked
+event files.
 
 ## What is good
 
@@ -31,57 +31,43 @@ These event families now use Immutables interfaces and Jackson annotations:
 
 `GUILD_CREATE` and `GUILD_DELETE` use separate package-private Jackson roots because their default variants differ. The `unavailable: true` subtype maps to `GuildUnavailableEvent`. Missing or `false` maps to the normal create/delete event.
 
-Full guild, message, and user payloads use `@JsonUnwrapped`. Delete payloads use `@JsonProperty` for Discord's `id`, `ids`, `channel_id`, and `guild_id` names. `Snowflake` handles scalar and list conversion.
+Full guild, message, and user payloads use `@JsonUnwrapped`. Delete payloads use `@JsonProperty` for Discord's `id`, `ids`,
+`channel_id`, and `guild_id` names. `Snowflake` handles scalar and list conversion.
 
-## The bad part
+Channel create, update, and delete share [`ChannelEventDeserializer.java`](src/main/java/dev/phinner/dukecord/gateway/events/ChannelEventDeserializer.java):
+a contextual deserializer that reads the flat payload as the polymorphic `Channel` through `context.readValue`, then wraps
+it in the target event. Polymorphism lives only on `Channel`; the three event interfaces carry no subtype tables.
 
-[`ChannelPayloads.java`](src/main/java/dev/phinner/dukecord/gateway/events/ChannelPayloads.java) is a technically correct but unacceptable workaround. Remove it.
+## Channel decode: what failed and why the deserializer won
 
-Discord sends a flat channel object, while the public API wants `ChannelEvent.channel()`. That suggests `@JsonUnwrapped Channel channel()`, but Jackson 3.1.4 cannot unwrap a polymorphic value. `Channel` uses `@JsonTypeInfo` on its `type` property. A direct unwrapped `Channel` silently decoded as `null` in a local probe.
+Two Jackson 3.1.4 mechanisms were rejected empirically before settling on the shared deserializer:
 
-The current workaround moves channel polymorphism onto every operation. Five channel variants multiplied by create, update, and delete produces 15 private Immutables adapters. This is the cursed cross-product the user rejected.
+- `@JsonUnwrapped Channel channel()` decodes as `null`: unwrapping buffers tokens and routes them by property name, and the
+  polymorphic wrapper contributes no property-name table.
+- `@JsonDeserialize(converter = StdConverter<Channel, Event>)` on the event interface builds its delegate deserializer for
+  `Channel` without the root-level `TypeWrappedDeserializer`, so the abstract type resolves to `AbstractDeserializer` and
+  every decode fails with "no Creators". Converter delegates never receive polymorphic type resolution.
 
-## Recommended replacement
+The shared deserializer works because `context.readValue(parser, Channel.class)` re-enters root resolution, which applies
+`Channel`'s `@JsonTypeInfo`. `DeserializationContext.getContextualType()` supplies the concrete event target at root, so one
+class serves all three operations. The Dukecord reader attribute needed by `DiscordEntityRefDeserializer` flows through the
+same context; a guild channel payload with `guild_id` fails to decode without it, which the probe below relies on.
 
-Use a small Jackson converter or deserializer per channel operation:
-
-```java
-@Value.Immutable
-@JsonDeserialize(converter = ChannelCreateEventConverter.class)
-public interface ChannelCreateEvent extends ChannelEvent {
-    Channel channel();
-}
-```
-
-Jackson should deserialize the flat payload as `Channel`, preserving the existing `type` polymorphism and Dukecord-bound reader context. The converter should only wrap that `Channel` in `ImmutableChannelCreateEvent`. Repeat for update and delete, sharing a generic base if it stays clearer than three direct implementations.
-
-Prefer `StdConverter<Channel, ChannelCreateEvent>` over a parser-level deserializer. It lets Jackson own all channel field and subtype decoding. Verify that `@JsonDeserialize(converter = ...)` on the event interface supplies `Channel` as the converter input type and preserves the reader attribute used by `DiscordEntityRefDeserializer`.
-
-Completion criteria:
-
-1. Delete `ChannelPayloads.java`.
-2. Restore the three public channel event interfaces to one `Channel channel()` property each.
-3. Remove the repeated `@JsonTypeInfo` and `@JsonSubTypes` tables from the three event interfaces.
-4. Keep `DiscordGatewayEvents` switch-only.
-5. Decode every supported channel type and an unknown type into the correct canonical `Channel` subtype.
-6. Confirm create listeners never receive update/delete events and family listeners receive each event once.
-7. Run formatting and the full build.
-
-If `StdConverter` loses the Dukecord reader context, use one shared contextual deserializer. It should call `context.readValue(parser, Channel.class)` and only construct the appropriate generated event wrapper. Keep channel field parsing inside Jackson.
+`ChannelPayloads.java` and its fifteen adapters are deleted.
 
 ## Verification already performed
 
-The current, cursed implementation passed an ephemeral JShell probe for:
+An ephemeral probe (outside the repository; no probe files remain) covered:
 
 - `GUILD_CREATE` with missing, `false`, and `true` `unavailable`
 - `GUILD_DELETE` with missing and `true` `unavailable`
-- Channel create, update, and delete for guild text, DM, category, thread, and unknown channel types
-- Message create, delete, and bulk delete
-- User update
-- Store-bound entity references
-- Concrete and family listener routing
-
-No probe files remain in the repository.
+- `GUILD_UPDATE`, `USER_UPDATE`, unknown dispatch names
+- Channel create, update, and delete for guild text (0 and 5), DM (1 and 3), category (4), thread (10, 11, and 12), and
+  unknown (99) channel types, asserting the canonical `Channel` subtype and, for guild channels, the store-bound
+  `guild()` reference
+- Message create with author, channel, and guild references; message delete; bulk delete
+- Concrete and family listener routing: a create listener received exactly one event, a `ChannelEvent` family listener
+  received create, update, and delete once each, and a message listener received no channel events
 
 The latest command passed:
 
@@ -89,7 +75,7 @@ The latest command passed:
 ./gradlew spotlessApply build --no-daemon
 ```
 
-Run the same command after replacing the channel adapters. Also run `git diff --check`.
+Run the same command after further changes. Also run `git diff --check`.
 
 ## Constraints and preferences
 
@@ -100,4 +86,4 @@ Run the same command after replacing the channel adapters. Also run `git diff --
 - Avoid new data-object layers.
 - The user values a small amount of direct adapter code over large annotation-driven type explosions.
 
-[`docs/gateway-events.md`](docs/gateway-events.md) currently documents the 15-adapter workaround. Update that section when replacing it.
+[`docs/gateway-events.md`](docs/gateway-events.md) documents the shared channel deserializer and the rejected alternatives.
