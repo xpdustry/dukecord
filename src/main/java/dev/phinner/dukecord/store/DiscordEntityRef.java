@@ -20,5 +20,7 @@ public interface DiscordEntityRef<T extends DiscordEntity> {
 
     Optional<T> get();
 
-    Optional<T> get(final LookupStrategy strategy);
+    T fetch();
+
+    T fetch(final boolean force);
 }

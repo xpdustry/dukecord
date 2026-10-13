@@ -35,8 +35,13 @@ final class DiscordEntityRefImpl<T extends DiscordEntity> implements DiscordEnti
     }
 
     @Override
-    public Optional<T> get(final LookupStrategy strategy) {
-        return this.store.getById(this.id, strategy);
+    public T fetch() {
+        return this.store.fetchById(this.id);
+    }
+
+    @Override
+    public T fetch(final boolean force) {
+        return this.store.fetchById(this.id, force);
     }
 
     @Override
