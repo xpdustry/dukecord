@@ -2,9 +2,15 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.gateway.events;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import dev.phinner.dukecord.model.channel.Channel;
 import org.immutables.value.Value;
-import tools.jackson.databind.annotation.JsonDeserialize;
 
 @Value.Immutable
-@JsonDeserialize(using = ChannelEventDeserializer.class)
-public interface ChannelDeleteEvent extends ChannelEvent {}
+public interface ChannelDeleteEvent extends ChannelEvent {
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    static ChannelDeleteEvent of(final Channel channel) {
+        return ImmutableChannelDeleteEvent.builder().channel(channel).build();
+    }
+}
