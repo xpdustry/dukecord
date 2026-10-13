@@ -16,10 +16,5 @@ public interface MessageDeleteBulkEvent extends MessageEvent {
     @JsonProperty("ids")
     List<Snowflake> messageIds();
 
-    @Override
-    @JsonProperty("channel_id")
-    Snowflake channelId();
-
-    @JsonProperty("guild_id")
     Optional<Snowflake> guildId();
 }

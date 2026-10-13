@@ -15,10 +15,5 @@ public interface MessageDeleteEvent extends MessageEvent {
     @JsonProperty("id")
     Snowflake messageId();
 
-    @Override
-    @JsonProperty("channel_id")
-    Snowflake channelId();
-
-    @JsonProperty("guild_id")
     Optional<Snowflake> guildId();
 }

@@ -5,5 +5,5 @@ package dev.phinner.dukecord.store;
 public enum LookupStrategy {
     CACHE_ONLY,
     FETCH_ONLY,
-    CACHE_OR_FETCH
+    FETCH_ON_CACHE_MISS
 }

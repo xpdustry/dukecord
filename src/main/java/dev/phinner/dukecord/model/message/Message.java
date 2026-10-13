@@ -7,7 +7,6 @@ import dev.phinner.dukecord.model.DiscordEntity;
 import dev.phinner.dukecord.model.Snowflake;
 import dev.phinner.dukecord.model.channel.Channel;
 import dev.phinner.dukecord.model.guild.Guild;
-import dev.phinner.dukecord.model.user.ImmutableUser;
 import dev.phinner.dukecord.model.user.User;
 import dev.phinner.dukecord.store.DiscordEntityRef;
 import java.time.Instant;
@@ -26,7 +25,6 @@ public interface Message extends DiscordEntity {
     @JsonProperty("guild_id")
     Optional<DiscordEntityRef<Guild>> guild();
 
-    @JsonDeserialize(as = ImmutableUser.class)
     User author();
 
     Optional<Snowflake> webhookId();
@@ -60,6 +58,5 @@ public interface Message extends DiscordEntity {
         return false;
     }
 
-    @JsonDeserialize(contentAs = ImmutableUser.class)
     List<User> mentions();
 }
