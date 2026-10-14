@@ -2,13 +2,13 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord;
 
+import dev.phinner.dukecord.channel.ChannelRepository;
 import dev.phinner.dukecord.gateway.DiscordEventSource;
 import dev.phinner.dukecord.gateway.GatewayIntentSet;
-import dev.phinner.dukecord.model.user.User;
-import dev.phinner.dukecord.store.ChannelStore;
-import dev.phinner.dukecord.store.GuildStore;
-import dev.phinner.dukecord.store.MessageStore;
-import dev.phinner.dukecord.store.UserStore;
+import dev.phinner.dukecord.guild.GuildRepository;
+import dev.phinner.dukecord.message.MessageRepository;
+import dev.phinner.dukecord.user.User;
+import dev.phinner.dukecord.user.UserRepository;
 
 /** A connected Discord client. */
 public interface Dukecord extends AutoCloseable {
@@ -19,13 +19,15 @@ public interface Dukecord extends AutoCloseable {
 
     User self();
 
-    GuildStore guilds();
+    GuildRepository guilds();
 
-    ChannelStore channels();
+    ChannelRepository channels();
 
-    MessageStore messages();
+    MessageRepository messages();
 
-    UserStore users();
+    UserRepository users();
+
+    DiscordRest rest();
 
     @Override
     void close();

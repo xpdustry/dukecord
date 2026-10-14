@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: Apache-2.0
+// SPDX-FileCopyrightText: 2026 phinner
+package dev.phinner.dukecord.message;
+
+import dev.phinner.dukecord.Snowflake;
+import java.util.Collection;
+
+public interface MessageRestOperations {
+
+    Message fetch(final Snowflake channelId, final Snowflake messageId);
+
+    Message create(final Snowflake channelId, final MessageCreateSpec spec);
+
+    void delete(final Snowflake channelId, final Snowflake messageId);
+
+    void delete(final Snowflake channelId, final Snowflake messageId, final String reason);
+
+    /** Takes 2 to 100 messages, none older than 14 days. */
+    void bulkDelete(final Snowflake channelId, final Collection<Snowflake> messageIds);
+
+    void bulkDelete(final Snowflake channelId, final Collection<Snowflake> messageIds, final String reason);
+}
