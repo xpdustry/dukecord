@@ -4,4 +4,7 @@ package dev.phinner.dukecord.user;
 
 import dev.phinner.dukecord.DiscordEntityRepository;
 
-public interface UserRepository extends DiscordEntityRepository.WithIdLookup<User> {}
+public interface UserRepository extends DiscordEntityRepository.WithIdLookup<User> {
+
+    UserRestOperations rest();
+}

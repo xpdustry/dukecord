@@ -5,4 +5,7 @@ package dev.phinner.dukecord.guild;
 import dev.phinner.dukecord.DiscordEntityRepository;
 
 public interface GuildRepository
-        extends DiscordEntityRepository.WithIdLookup<Guild>, DiscordEntityRepository.WithGlobalLookup<Guild> {}
+        extends DiscordEntityRepository.WithIdLookup<Guild>, DiscordEntityRepository.WithGlobalLookup<Guild> {
+
+    GuildRestOperations rest();
+}

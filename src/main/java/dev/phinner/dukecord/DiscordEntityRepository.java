@@ -9,6 +9,9 @@ import java.util.Optional;
  * Access to Discord objects of one kind, combining the cache with REST. {@code get} methods only read the cache and never block. {@code fetch} methods return the cached entity when present,
  * otherwise request it from Discord and cache the result; {@code force} skips the cache. List fetches always request.
  * Fetches block and throw {@link java.io.UncheckedIOException} when the request fails.
+ *
+ * <p>Each repository also exposes {@code rest()}, its kind's REST routes. Every route method maps to one request and
+ * never reads or writes the cache. Methods with a {@code reason} parameter record it in the guild audit log.
  */
 public interface DiscordEntityRepository<T extends DiscordEntity> {
 

@@ -5,4 +5,7 @@ package dev.phinner.dukecord.channel;
 import dev.phinner.dukecord.DiscordEntityRepository;
 
 public interface ChannelRepository
-        extends DiscordEntityRepository.WithIdLookup<Channel>, DiscordEntityRepository.WithGuildLookup<Channel> {}
+        extends DiscordEntityRepository.WithIdLookup<Channel>, DiscordEntityRepository.WithGuildLookup<Channel> {
+
+    ChannelRestOperations rest();
+}

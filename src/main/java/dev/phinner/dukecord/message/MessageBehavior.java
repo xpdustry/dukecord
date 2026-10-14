@@ -46,10 +46,10 @@ public interface MessageBehavior extends DiscordEntityBehavior<Message> {
     }
 
     default void delete() {
-        this.duke().rest().messages().delete(this.channelId(), this.id());
+        this.duke().messages().rest().delete(this.channelId(), this.id());
     }
 
     default void delete(final String reason) {
-        this.duke().rest().messages().delete(this.channelId(), this.id(), reason);
+        this.duke().messages().rest().delete(this.channelId(), this.id(), reason);
     }
 }

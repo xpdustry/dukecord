@@ -31,10 +31,10 @@ public interface ChannelBehavior extends DiscordEntityBehavior<Channel> {
     }
 
     default void delete() {
-        this.duke().rest().channels().delete(this.id());
+        this.duke().channels().rest().delete(this.id());
     }
 
     default void delete(final String reason) {
-        this.duke().rest().channels().delete(this.id(), reason);
+        this.duke().channels().rest().delete(this.id(), reason);
     }
 }

@@ -39,7 +39,7 @@ public interface MessageChannelBehavior extends ChannelBehavior {
     }
 
     default Message send(final MessageCreateSpec spec) {
-        return this.duke().rest().messages().create(this.id(), spec);
+        return this.duke().messages().rest().create(this.id(), spec);
     }
 
     default Message send(final String content) {

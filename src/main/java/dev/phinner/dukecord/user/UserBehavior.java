@@ -32,6 +32,6 @@ public interface UserBehavior extends DiscordEntityBehavior<User> {
     }
 
     default DmChannel createDm() {
-        return this.duke().rest().channels().createDm(this.id());
+        return this.duke().channels().rest().createDm(this.id());
     }
 }

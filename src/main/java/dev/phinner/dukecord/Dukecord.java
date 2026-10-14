@@ -27,8 +27,6 @@ public interface Dukecord extends AutoCloseable {
 
     UserRepository users();
 
-    DiscordRest rest();
-
     @Override
     void close();
 }

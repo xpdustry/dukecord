@@ -25,10 +25,10 @@ public non-sealed interface ThreadChannel extends GuildChannel, MessageChannel {
     }
 
     default void join() {
-        this.duke().rest().channels().joinThread(this.id());
+        this.duke().channels().rest().joinThread(this.id());
     }
 
     default void leave() {
-        this.duke().rest().channels().leaveThread(this.id());
+        this.duke().channels().rest().leaveThread(this.id());
     }
 }
