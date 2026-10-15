@@ -5,6 +5,7 @@ package dev.phinner.dukecord.channel;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.phinner.dukecord.guild.GuildBehavior;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 
 public sealed interface GuildChannel extends Channel permits CategoryChannel, GuildTextChannel, ThreadChannel {
@@ -25,8 +26,5 @@ public sealed interface GuildChannel extends Channel permits CategoryChannel, Gu
     @JsonProperty("parent_id")
     Optional<ChannelBehavior> parent();
 
-    @Value.Default
-    default int flags() {
-        return 0;
-    }
+    Set<ChannelFlag> flags();
 }

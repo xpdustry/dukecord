@@ -4,6 +4,7 @@ package dev.phinner.dukecord.message;
 
 import dev.phinner.dukecord.Snowflake;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -43,8 +44,5 @@ public interface Attachment {
         return false;
     }
 
-    @Value.Default
-    default int flags() {
-        return 0;
-    }
+    Set<AttachmentFlag> flags();
 }

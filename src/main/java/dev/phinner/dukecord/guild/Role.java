@@ -9,6 +9,7 @@ import dev.phinner.dukecord.DiscordEntity;
 import dev.phinner.dukecord.Snowflake;
 import java.awt.Color;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -56,8 +57,5 @@ public interface Role extends DiscordEntity, RoleBehavior {
 
     Optional<String> unicodeEmoji();
 
-    @Value.Default
-    default int flags() {
-        return 0;
-    }
+    Set<RoleFlag> flags();
 }

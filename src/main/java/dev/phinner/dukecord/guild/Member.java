@@ -11,6 +11,7 @@ import dev.phinner.dukecord.user.User;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -70,10 +71,7 @@ public interface Member extends DiscordEntity, MemberBehavior {
         return false;
     }
 
-    @Value.Default
-    default int flags() {
-        return 0;
-    }
+    Set<MemberFlag> flags();
 
     /** Only on members received with an interaction, counting channel overwrites. */
     Optional<PermissionSet> permissions();

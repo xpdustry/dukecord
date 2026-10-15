@@ -12,6 +12,7 @@ import dev.phinner.dukecord.user.User;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -49,10 +50,7 @@ public interface Message extends DiscordEntity, MessageBehavior {
         return 0;
     }
 
-    @Value.Default
-    default int flags() {
-        return 0;
-    }
+    Set<MessageFlag> flags();
 
     @Value.Default
     default boolean tts() {

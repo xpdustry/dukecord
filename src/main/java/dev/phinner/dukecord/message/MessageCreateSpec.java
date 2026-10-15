@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.phinner.dukecord.component.Component;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonSerialize;
 
@@ -25,7 +26,7 @@ public interface MessageCreateSpec {
 
     /** Only for interaction replies and follow-ups. */
     static MessageCreateSpec ephemeral(final String content) {
-        return builder().content(content).flags(MessageFlags.EPHEMERAL).build();
+        return builder().content(content).addFlags(MessageFlag.EPHEMERAL).build();
     }
 
     Optional<String> content();
@@ -51,8 +52,8 @@ public interface MessageCreateSpec {
         return false;
     }
 
-    /** See {@link MessageFlags}. */
-    Optional<Integer> flags();
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    Set<MessageFlag> flags();
 
     interface Builder {
         Builder from(MessageCreateSpec instance);
@@ -93,9 +94,13 @@ public interface MessageCreateSpec {
 
         Builder tts(boolean tts);
 
-        Builder flags(int flags);
+        Builder addFlags(MessageFlag element);
 
-        Builder flags(Optional<Integer> flags);
+        Builder addFlags(MessageFlag... elements);
+
+        Builder flags(Iterable<MessageFlag> elements);
+
+        Builder addAllFlags(Iterable<MessageFlag> elements);
 
         MessageCreateSpec build();
     }

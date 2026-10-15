@@ -7,6 +7,7 @@ import dev.phinner.dukecord.Snowflake;
 import dev.phinner.dukecord.component.Component;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonSerialize;
 
@@ -37,8 +38,8 @@ public interface MessageEditSpec {
         return AllowedMentions.none();
     }
 
-    /** Only {@link MessageFlags#SUPPRESS_EMBEDS} and {@link MessageFlags#IS_COMPONENTS_V2} can change. */
-    Optional<Integer> flags();
+    /** Replaces the flags. Only {@link MessageFlag#SUPPRESS_EMBEDS} and {@link MessageFlag#IS_COMPONENTS_V2} can change. */
+    Optional<Set<MessageFlag>> flags();
 
     /** Added to the message. */
     @JsonIgnore
@@ -68,9 +69,9 @@ public interface MessageEditSpec {
 
         Builder allowedMentions(AllowedMentions allowedMentions);
 
-        Builder flags(int flags);
+        Builder flags(Set<MessageFlag> flags);
 
-        Builder flags(Optional<Integer> flags);
+        Builder flags(Optional<? extends Set<MessageFlag>> flags);
 
         Builder addFiles(FileUpload element);
 
