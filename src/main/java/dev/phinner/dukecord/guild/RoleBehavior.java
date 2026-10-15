@@ -44,11 +44,11 @@ public interface RoleBehavior extends DiscordEntityBehavior<Role> {
         return this.duke().roles().fetchByGuildAndId(this.guildId(), this.id(), force);
     }
 
-    default Role edit(final RoleSpec spec) {
+    default Role edit(final RoleEditSpec spec) {
         return this.duke().roles().rest().edit(this.guildId(), this.id(), spec);
     }
 
-    default Role edit(final RoleSpec spec, final String reason) {
+    default Role edit(final RoleEditSpec spec, final String reason) {
         return this.duke().roles().rest().edit(this.guildId(), this.id(), spec, reason);
     }
 

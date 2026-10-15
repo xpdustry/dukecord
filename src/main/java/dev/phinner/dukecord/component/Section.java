@@ -32,6 +32,14 @@ public non-sealed interface Section extends Component {
     @Value.Parameter
     Component accessory();
 
+    @Override
+    default Section withDisabled(final boolean disabled) {
+        return Section.builder()
+                .from(this)
+                .accessory(this.accessory().withDisabled(disabled))
+                .build();
+    }
+
     interface Builder {
         Builder from(final Section instance);
 

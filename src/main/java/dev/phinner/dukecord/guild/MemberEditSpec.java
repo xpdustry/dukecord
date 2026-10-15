@@ -4,8 +4,8 @@ package dev.phinner.dukecord.guild;
 
 import dev.phinner.dukecord.Snowflake;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonSerialize;
 
@@ -24,7 +24,7 @@ public interface MemberEditSpec {
     Optional<String> nick();
 
     /** Replaces every role of the member. */
-    Optional<List<Snowflake>> roles();
+    Optional<Set<Snowflake>> roles();
 
     /** At most 28 days ahead. */
     Optional<Instant> communicationDisabledUntil();
@@ -43,7 +43,7 @@ public interface MemberEditSpec {
 
         Builder nick(final String nick);
 
-        Builder roles(final List<Snowflake> roles);
+        Builder roles(final Set<Snowflake> roles);
 
         Builder communicationDisabledUntil(final Instant communicationDisabledUntil);
 

@@ -11,13 +11,13 @@ public interface RoleRestOperations {
 
     List<Role> fetchAllByGuild(final Snowflake guildId);
 
-    Role create(final Snowflake guildId, final RoleSpec spec);
+    Role create(final Snowflake guildId, final RoleCreateSpec spec);
 
-    Role create(final Snowflake guildId, final RoleSpec spec, final String reason);
+    Role create(final Snowflake guildId, final RoleCreateSpec spec, final String reason);
 
-    Role edit(final Snowflake guildId, final Snowflake roleId, final RoleSpec spec);
+    Role edit(final Snowflake guildId, final Snowflake roleId, final RoleEditSpec spec);
 
-    Role edit(final Snowflake guildId, final Snowflake roleId, final RoleSpec spec, final String reason);
+    Role edit(final Snowflake guildId, final Snowflake roleId, final RoleEditSpec spec, final String reason);
 
     void delete(final Snowflake guildId, final Snowflake roleId);
 

@@ -8,6 +8,7 @@ import dev.phinner.dukecord.Snowflake;
 import dev.phinner.dukecord.channel.MessageChannelBehavior;
 import dev.phinner.dukecord.component.Component;
 import dev.phinner.dukecord.guild.GuildBehavior;
+import dev.phinner.dukecord.guild.Member;
 import dev.phinner.dukecord.user.User;
 import java.time.Instant;
 import java.util.List;
@@ -33,6 +34,9 @@ public interface Message extends DiscordEntity, MessageBehavior {
     Optional<GuildBehavior> guild();
 
     User author();
+
+    /** The author as a member of the guild, absent in DMs and for webhooks. */
+    Optional<Member> member();
 
     Optional<Snowflake> webhookId();
 

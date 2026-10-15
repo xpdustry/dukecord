@@ -99,6 +99,11 @@ public non-sealed interface StringSelectMenu extends Component {
         }
     }
 
+    @Override
+    default StringSelectMenu withDisabled(final boolean disabled) {
+        return StringSelectMenu.builder().from(this).disabled(disabled).build();
+    }
+
     interface Builder {
         Builder from(final StringSelectMenu instance);
 

@@ -9,15 +9,15 @@ import tools.jackson.databind.annotation.JsonSerialize;
 
 /** A popup form. Inputs go in {@link dev.phinner.dukecord.component.Label}s. */
 @Value.Immutable
-@JsonSerialize(as = ImmutableModalSpec.class)
-public interface ModalSpec {
+@JsonSerialize(as = ImmutableModalCreateSpec.class)
+public interface ModalCreateSpec {
 
     static Builder builder() {
-        return ImmutableModalSpec.builder();
+        return ImmutableModalCreateSpec.builder();
     }
 
-    static ModalSpec of(final String customId, final String title, final Component... components) {
-        return ImmutableModalSpec.of(customId, title, List.of(components));
+    static ModalCreateSpec of(final String customId, final String title, final Component... components) {
+        return ImmutableModalCreateSpec.of(customId, title, List.of(components));
     }
 
     @Value.Parameter
@@ -30,7 +30,7 @@ public interface ModalSpec {
     List<Component> components();
 
     interface Builder {
-        Builder from(final ModalSpec instance);
+        Builder from(final ModalCreateSpec instance);
 
         Builder customId(final String customId);
 
@@ -44,6 +44,6 @@ public interface ModalSpec {
 
         Builder addAllComponents(final Iterable<? extends Component> elements);
 
-        ModalSpec build();
+        ModalCreateSpec build();
     }
 }

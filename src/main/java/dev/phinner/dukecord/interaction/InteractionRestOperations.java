@@ -22,7 +22,7 @@ public interface InteractionRestOperations {
 
     void deferUpdate(final Snowflake interactionId, final String token);
 
-    void showModal(final Snowflake interactionId, final String token, final ModalSpec modal);
+    void showModal(final Snowflake interactionId, final String token, final ModalCreateSpec modal);
 
     void suggest(final Snowflake interactionId, final String token, final List<CommandOption.Choice> choices);
 

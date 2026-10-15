@@ -37,6 +37,16 @@ public non-sealed interface Container extends Component {
         return false;
     }
 
+    @Override
+    default Container withDisabled(final boolean disabled) {
+        return Container.builder()
+                .from(this)
+                .components(this.components().stream()
+                        .map(c -> c.withDisabled(disabled))
+                        .toList())
+                .build();
+    }
+
     interface Builder {
         Builder from(final Container instance);
 

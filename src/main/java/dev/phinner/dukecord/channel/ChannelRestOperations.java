@@ -19,6 +19,25 @@ public interface ChannelRestOperations {
 
     void delete(final Snowflake channelId, final String reason);
 
+    GuildTextChannel createTextChannel(final Snowflake guildId, final ChannelCreateSpec spec);
+
+    GuildTextChannel createTextChannel(final Snowflake guildId, final ChannelCreateSpec spec, final String reason);
+
+    CategoryChannel createCategory(final Snowflake guildId, final ChannelCreateSpec spec);
+
+    CategoryChannel createCategory(final Snowflake guildId, final ChannelCreateSpec spec, final String reason);
+
+    /** Starts a thread on its own. The bot joins the threads it creates. */
+    ThreadChannel createThread(final Snowflake channelId, final ThreadCreateSpec spec);
+
+    ThreadChannel createThread(final Snowflake channelId, final ThreadCreateSpec spec, final String reason);
+
+    /** Starts a thread from a message, sharing the message's ID. */
+    ThreadChannel createThread(final Snowflake channelId, final Snowflake messageId, final ThreadCreateSpec spec);
+
+    ThreadChannel createThread(
+            final Snowflake channelId, final Snowflake messageId, final ThreadCreateSpec spec, final String reason);
+
     void joinThread(final Snowflake threadId);
 
     void leaveThread(final Snowflake threadId);

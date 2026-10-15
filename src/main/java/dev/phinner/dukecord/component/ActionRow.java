@@ -28,6 +28,12 @@ public non-sealed interface ActionRow extends Component {
     @Value.Parameter
     List<Component> components();
 
+    @Override
+    default ActionRow withDisabled(final boolean disabled) {
+        return ImmutableActionRow.of(
+                this.components().stream().map(c -> c.withDisabled(disabled)).toList());
+    }
+
     interface Builder {
         Builder from(final ActionRow instance);
 

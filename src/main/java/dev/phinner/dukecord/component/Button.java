@@ -68,8 +68,13 @@ public non-sealed interface Button extends Component {
         return false;
     }
 
+    @Override
     default Button withDisabled(final boolean disabled) {
-        return ImmutableButton.copyOf(this).withDisabled(disabled);
+        return Button.builder().from(this).disabled(disabled).build();
+    }
+
+    default Button withEmoji(final Emoji emoji) {
+        return Button.builder().from(this).emoji(emoji).build();
     }
 
     enum Style {

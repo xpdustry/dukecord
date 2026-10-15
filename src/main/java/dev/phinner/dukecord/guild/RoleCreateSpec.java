@@ -7,13 +7,13 @@ import java.util.Optional;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonSerialize;
 
-/** A new role, or changes to one. Absent attributes take Discord's default on creation and stay as they are on edits. */
+/** A new role. Absent attributes take Discord's defaults. */
 @Value.Immutable
-@JsonSerialize(as = ImmutableRoleSpec.class)
-public interface RoleSpec {
+@JsonSerialize(as = ImmutableRoleCreateSpec.class)
+public interface RoleCreateSpec {
 
     static Builder builder() {
-        return ImmutableRoleSpec.builder();
+        return ImmutableRoleCreateSpec.builder();
     }
 
     Optional<String> name();
@@ -29,7 +29,7 @@ public interface RoleSpec {
     Optional<String> unicodeEmoji();
 
     interface Builder {
-        Builder from(final RoleSpec instance);
+        Builder from(final RoleCreateSpec instance);
 
         Builder name(final String name);
 
@@ -43,6 +43,6 @@ public interface RoleSpec {
 
         Builder unicodeEmoji(final String unicodeEmoji);
 
-        RoleSpec build();
+        RoleCreateSpec build();
     }
 }

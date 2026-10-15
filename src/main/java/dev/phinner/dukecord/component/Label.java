@@ -37,6 +37,14 @@ public non-sealed interface Label extends Component {
     @Value.Parameter
     Component component();
 
+    @Override
+    default Label withDisabled(final boolean disabled) {
+        return Label.builder()
+                .from(this)
+                .component(this.component().withDisabled(disabled))
+                .build();
+    }
+
     interface Builder {
         Builder from(final Label instance);
 

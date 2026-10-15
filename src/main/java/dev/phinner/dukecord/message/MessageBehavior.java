@@ -6,6 +6,8 @@ import dev.phinner.dukecord.DiscordEntityBehavior;
 import dev.phinner.dukecord.Dukecord;
 import dev.phinner.dukecord.Snowflake;
 import dev.phinner.dukecord.channel.MessageChannelBehavior;
+import dev.phinner.dukecord.channel.ThreadChannel;
+import dev.phinner.dukecord.channel.ThreadCreateSpec;
 import java.util.Optional;
 
 public interface MessageBehavior extends DiscordEntityBehavior<Message> {
@@ -53,6 +55,18 @@ public interface MessageBehavior extends DiscordEntityBehavior<Message> {
 
     default Message edit(final String content) {
         return this.edit(MessageEditSpec.of(content));
+    }
+
+    default ThreadChannel createThread(final String name) {
+        return this.createThread(ThreadCreateSpec.of(name));
+    }
+
+    default ThreadChannel createThread(final ThreadCreateSpec spec) {
+        return this.duke().channels().rest().createThread(this.channelId(), this.id(), spec);
+    }
+
+    default ThreadChannel createThread(final ThreadCreateSpec spec, final String reason) {
+        return this.duke().channels().rest().createThread(this.channelId(), this.id(), spec, reason);
     }
 
     default void delete() {

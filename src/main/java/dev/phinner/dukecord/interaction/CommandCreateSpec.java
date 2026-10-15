@@ -12,24 +12,24 @@ import tools.jackson.databind.annotation.JsonSerialize;
 
 /** A command to register. Registering one with an existing name and type replaces it. */
 @Value.Immutable
-@JsonSerialize(as = ImmutableCommandSpec.class)
-public interface CommandSpec {
+@JsonSerialize(as = ImmutableCommandCreateSpec.class)
+public interface CommandCreateSpec {
 
     static Builder builder() {
-        return ImmutableCommandSpec.builder();
+        return ImmutableCommandCreateSpec.builder();
     }
 
-    static CommandSpec chatInput(final String name, final String description, final CommandOption... options) {
-        return ImmutableCommandSpec.of(
+    static CommandCreateSpec chatInput(final String name, final String description, final CommandOption... options) {
+        return ImmutableCommandCreateSpec.of(
                 ApplicationCommand.Type.CHAT_INPUT, name, Optional.of(description), List.of(options));
     }
 
-    static CommandSpec user(final String name) {
-        return ImmutableCommandSpec.of(ApplicationCommand.Type.USER, name, Optional.empty(), List.of());
+    static CommandCreateSpec user(final String name) {
+        return ImmutableCommandCreateSpec.of(ApplicationCommand.Type.USER, name, Optional.empty(), List.of());
     }
 
-    static CommandSpec message(final String name) {
-        return ImmutableCommandSpec.of(ApplicationCommand.Type.MESSAGE, name, Optional.empty(), List.of());
+    static CommandCreateSpec message(final String name) {
+        return ImmutableCommandCreateSpec.of(ApplicationCommand.Type.MESSAGE, name, Optional.empty(), List.of());
     }
 
     @Value.Default
@@ -60,7 +60,7 @@ public interface CommandSpec {
     Optional<Boolean> nsfw();
 
     interface Builder {
-        Builder from(final CommandSpec instance);
+        Builder from(final CommandCreateSpec instance);
 
         Builder type(final ApplicationCommand.Type type);
 
@@ -88,6 +88,6 @@ public interface CommandSpec {
 
         Builder nsfw(final boolean nsfw);
 
-        CommandSpec build();
+        CommandCreateSpec build();
     }
 }

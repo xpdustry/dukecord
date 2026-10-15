@@ -132,6 +132,14 @@ public non-sealed interface EntitySelectMenu extends Component {
         }
     }
 
+    @Override
+    default EntitySelectMenu withDisabled(final boolean disabled) {
+        return EntitySelectMenu.builder(this.kind())
+                .from(this)
+                .disabled(disabled)
+                .build();
+    }
+
     interface Builder {
         Builder from(final EntitySelectMenu instance);
 

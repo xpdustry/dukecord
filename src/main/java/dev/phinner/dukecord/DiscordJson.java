@@ -5,6 +5,7 @@ package dev.phinner.dukecord;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import dev.phinner.dukecord.channel.MessageChannelDeserializer;
+import dev.phinner.dukecord.message.MessageDeserializer;
 import java.awt.Color;
 import java.io.Serial;
 import java.util.EnumSet;
@@ -53,6 +54,7 @@ public final class DiscordJson {
                     .setDeserializerModifier(MessageChannelDeserializer.MODIFIER)
                     .addSerializer(Color.class, new ColorSerializer())
                     .addDeserializer(Color.class, new ColorDeserializer()))
+            .addModule(new SimpleModule().setDeserializerModifier(MessageDeserializer.MODIFIER))
             .build();
 
     /**

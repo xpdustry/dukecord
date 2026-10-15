@@ -4,14 +4,15 @@ package dev.phinner.dukecord.guild;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.OptBoolean;
 import dev.phinner.dukecord.DiscordEntity;
 import dev.phinner.dukecord.Snowflake;
 import dev.phinner.dukecord.user.User;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -44,7 +45,14 @@ public interface Member extends DiscordEntity, MemberBehavior {
     Optional<String> avatar();
 
     /** Without the {@code @everyone} role. */
-    List<RoleBehavior> roles();
+    @JsonProperty("roles")
+    Set<Snowflake> roleIds();
+
+    default Set<RoleBehavior> roles() {
+        return this.roleIds().stream()
+                .map(id -> RoleBehavior.of(this.duke(), this.guildId(), id))
+                .collect(Collectors.toUnmodifiableSet());
+    }
 
     /** Absent for guest members of voice channels. */
     Optional<Instant> joinedAt();

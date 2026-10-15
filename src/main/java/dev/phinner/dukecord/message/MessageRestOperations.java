@@ -3,6 +3,7 @@
 package dev.phinner.dukecord.message;
 
 import dev.phinner.dukecord.Snowflake;
+import java.io.InputStream;
 import java.util.Collection;
 
 public interface MessageRestOperations {
@@ -15,6 +16,9 @@ public interface MessageRestOperations {
     Message edit(final Snowflake channelId, final Snowflake messageId, final MessageEditSpec spec);
 
     void delete(final Snowflake channelId, final Snowflake messageId);
+
+    /** Opens the file of an attachment from Discord's CDN. The caller closes the stream. */
+    InputStream download(final Attachment attachment);
 
     void delete(final Snowflake channelId, final Snowflake messageId, final String reason);
 

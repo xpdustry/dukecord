@@ -46,6 +46,18 @@ public interface MessageChannelBehavior extends ChannelBehavior {
         return this.send(MessageCreateSpec.of(content));
     }
 
+    default ThreadChannel createThread(final String name) {
+        return this.createThread(ThreadCreateSpec.of(name));
+    }
+
+    default ThreadChannel createThread(final ThreadCreateSpec spec) {
+        return this.duke().channels().rest().createThread(this.id(), spec);
+    }
+
+    default ThreadChannel createThread(final ThreadCreateSpec spec, final String reason) {
+        return this.duke().channels().rest().createThread(this.id(), spec, reason);
+    }
+
     private static MessageChannel asMessageChannel(final Channel channel) {
         if (channel instanceof MessageChannel message) {
             return message;

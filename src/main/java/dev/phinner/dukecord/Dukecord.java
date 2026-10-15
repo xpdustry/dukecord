@@ -11,7 +11,6 @@ import dev.phinner.dukecord.guild.RoleRepository;
 import dev.phinner.dukecord.interaction.CommandRepository;
 import dev.phinner.dukecord.interaction.InteractionRepository;
 import dev.phinner.dukecord.message.MessageRepository;
-import dev.phinner.dukecord.user.User;
 import dev.phinner.dukecord.user.UserRepository;
 
 /** A connected Discord client. */
@@ -20,8 +19,6 @@ public interface Dukecord extends AutoCloseable {
     GatewayIntentSet intents();
 
     DiscordEventSource events();
-
-    User self();
 
     GuildRepository guilds();
 

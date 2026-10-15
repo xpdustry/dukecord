@@ -11,18 +11,18 @@ public interface CommandRestOperations {
     List<ApplicationCommand> fetchGlobal();
 
     /** Replaces every global command with these. */
-    List<ApplicationCommand> overwriteGlobal(final List<CommandSpec> specs);
+    List<ApplicationCommand> overwriteGlobal(final List<CommandCreateSpec> specs);
 
-    ApplicationCommand createGlobal(final CommandSpec spec);
+    ApplicationCommand createGlobal(final CommandCreateSpec spec);
 
     void deleteGlobal(final Snowflake commandId);
 
     List<ApplicationCommand> fetchGuild(final Snowflake guildId);
 
     /** Replaces every command of the guild with these. */
-    List<ApplicationCommand> overwriteGuild(final Snowflake guildId, final List<CommandSpec> specs);
+    List<ApplicationCommand> overwriteGuild(final Snowflake guildId, final List<CommandCreateSpec> specs);
 
-    ApplicationCommand createGuild(final Snowflake guildId, final CommandSpec spec);
+    ApplicationCommand createGuild(final Snowflake guildId, final CommandCreateSpec spec);
 
     void deleteGuild(final Snowflake guildId, final Snowflake commandId);
 }

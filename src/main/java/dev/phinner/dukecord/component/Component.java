@@ -51,6 +51,14 @@ public sealed interface Component
 
     int type();
 
+    /**
+     * Disables or enables this component and the interactive components inside it, such as the buttons of an action
+     * row. Other components are returned as they are.
+     */
+    default Component withDisabled(final boolean disabled) {
+        return this;
+    }
+
     /** Identifies the component within its message. Discord numbers the components sent without one. */
     Optional<Integer> id();
 }
