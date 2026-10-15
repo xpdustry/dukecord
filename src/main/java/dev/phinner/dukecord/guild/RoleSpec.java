@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.guild;
 
+import java.awt.Color;
 import java.util.Optional;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonSerialize;
@@ -19,7 +20,7 @@ public interface RoleSpec {
 
     Optional<PermissionSet> permissions();
 
-    Optional<Integer> color();
+    Optional<Color> color();
 
     Optional<Boolean> hoist();
 
@@ -38,9 +39,9 @@ public interface RoleSpec {
 
         Builder permissions(Optional<? extends PermissionSet> permissions);
 
-        Builder color(int color);
+        Builder color(Color color);
 
-        Builder color(Optional<Integer> color);
+        Builder color(Optional<? extends Color> color);
 
         Builder hoist(boolean hoist);
 

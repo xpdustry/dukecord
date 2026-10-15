@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.component;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Optional;
 import org.immutables.value.Value;
@@ -28,7 +29,7 @@ public non-sealed interface Container extends Component {
 
     List<Component> components();
 
-    Optional<Integer> accentColor();
+    Optional<Color> accentColor();
 
     @Value.Default
     default boolean spoiler() {
@@ -50,9 +51,9 @@ public non-sealed interface Container extends Component {
 
         Builder addAllComponents(Iterable<? extends Component> elements);
 
-        Builder accentColor(int accentColor);
+        Builder accentColor(Color accentColor);
 
-        Builder accentColor(Optional<Integer> accentColor);
+        Builder accentColor(Optional<? extends Color> accentColor);
 
         Builder spoiler(boolean spoiler);
 

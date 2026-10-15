@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.OptBoolean;
 import dev.phinner.dukecord.DiscordEntity;
 import dev.phinner.dukecord.Snowflake;
+import java.awt.Color;
 import java.util.Optional;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
@@ -28,9 +29,10 @@ public interface Role extends DiscordEntity, RoleBehavior {
     /** Higher is above. The {@code @everyone} role is at 0. */
     int position();
 
+    /** Black when the role has no color, which Discord sends as {@code 0}. */
     @Value.Default
-    default int color() {
-        return 0;
+    default Color color() {
+        return Color.BLACK;
     }
 
     /** Whether members are listed apart from online members. */

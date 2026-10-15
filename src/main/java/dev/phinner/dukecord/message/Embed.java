@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.message;
 
+import java.awt.Color;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ public interface Embed {
 
     Optional<Instant> timestamp();
 
-    Optional<Integer> color();
+    Optional<Color> color();
 
     Optional<Author> author();
 
@@ -218,9 +219,9 @@ public interface Embed {
 
         Builder timestamp(Optional<? extends Instant> timestamp);
 
-        Builder color(int color);
+        Builder color(Color color);
 
-        Builder color(Optional<Integer> color);
+        Builder color(Optional<? extends Color> color);
 
         Builder author(Author author);
 
