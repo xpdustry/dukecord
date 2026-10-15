@@ -14,7 +14,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableButton.class)
 public non-sealed interface Button extends Component {
 
-    static ImmutableButton.Builder builder() {
+    static Builder builder() {
         return ImmutableButton.builder();
     }
 
@@ -88,5 +88,39 @@ public non-sealed interface Button extends Component {
         public int value() {
             return this.value;
         }
+    }
+
+    interface Builder {
+        Builder from(Button instance);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder style(Style style);
+
+        Builder label(String label);
+
+        Builder label(Optional<String> label);
+
+        Builder emoji(Emoji emoji);
+
+        Builder emoji(Optional<? extends Emoji> emoji);
+
+        Builder customId(String customId);
+
+        Builder customId(Optional<String> customId);
+
+        Builder url(String url);
+
+        Builder url(Optional<String> url);
+
+        Builder skuId(Snowflake skuId);
+
+        Builder skuId(Optional<? extends Snowflake> skuId);
+
+        Builder disabled(boolean disabled);
+
+        Button build();
     }
 }

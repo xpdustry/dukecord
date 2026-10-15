@@ -15,7 +15,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableCommandSpec.class)
 public interface CommandSpec {
 
-    static ImmutableCommandSpec.Builder builder() {
+    static Builder builder() {
         return ImmutableCommandSpec.builder();
     }
 
@@ -53,4 +53,42 @@ public interface CommandSpec {
     Set<InteractionContext> contexts();
 
     Optional<Boolean> nsfw();
+
+    interface Builder {
+        Builder from(CommandSpec instance);
+
+        Builder type(ApplicationCommand.Type type);
+
+        Builder name(String name);
+
+        Builder description(String description);
+
+        Builder description(Optional<String> description);
+
+        Builder addOptions(CommandOption element);
+
+        Builder addOptions(CommandOption... elements);
+
+        Builder options(Iterable<? extends CommandOption> elements);
+
+        Builder addAllOptions(Iterable<? extends CommandOption> elements);
+
+        Builder defaultMemberPermissions(PermissionSet defaultMemberPermissions);
+
+        Builder defaultMemberPermissions(Optional<? extends PermissionSet> defaultMemberPermissions);
+
+        Builder addContexts(InteractionContext element);
+
+        Builder addContexts(InteractionContext... elements);
+
+        Builder contexts(Iterable<InteractionContext> elements);
+
+        Builder addAllContexts(Iterable<InteractionContext> elements);
+
+        Builder nsfw(boolean nsfw);
+
+        Builder nsfw(Optional<Boolean> nsfw);
+
+        CommandSpec build();
+    }
 }

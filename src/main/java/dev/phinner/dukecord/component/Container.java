@@ -12,6 +12,10 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableContainer.class)
 public non-sealed interface Container extends Component {
 
+    static Builder builder() {
+        return ImmutableContainer.builder();
+    }
+
     static Container of(final Component... components) {
         return ImmutableContainer.builder().addComponents(components).build();
     }
@@ -29,5 +33,29 @@ public non-sealed interface Container extends Component {
     @Value.Default
     default boolean spoiler() {
         return false;
+    }
+
+    interface Builder {
+        Builder from(Container instance);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder addComponents(Component element);
+
+        Builder addComponents(Component... elements);
+
+        Builder components(Iterable<? extends Component> elements);
+
+        Builder addAllComponents(Iterable<? extends Component> elements);
+
+        Builder accentColor(int accentColor);
+
+        Builder accentColor(Optional<Integer> accentColor);
+
+        Builder spoiler(boolean spoiler);
+
+        Container build();
     }
 }

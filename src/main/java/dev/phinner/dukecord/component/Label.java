@@ -11,6 +11,10 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableLabel.class)
 public non-sealed interface Label extends Component {
 
+    static Builder builder() {
+        return ImmutableLabel.builder();
+    }
+
     static Label of(final String label, final Component component) {
         return ImmutableLabel.builder().label(label).component(component).build();
     }
@@ -30,4 +34,22 @@ public non-sealed interface Label extends Component {
     Optional<String> description();
 
     Component component();
+
+    interface Builder {
+        Builder from(Label instance);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder label(String label);
+
+        Builder description(String description);
+
+        Builder description(Optional<String> description);
+
+        Builder component(Component component);
+
+        Label build();
+    }
 }

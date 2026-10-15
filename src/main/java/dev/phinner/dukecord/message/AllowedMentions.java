@@ -16,7 +16,7 @@ public interface AllowedMentions {
         return builder().build();
     }
 
-    static ImmutableAllowedMentions.Builder builder() {
+    static Builder builder() {
         return ImmutableAllowedMentions.builder();
     }
 
@@ -38,5 +38,37 @@ public interface AllowedMentions {
         ROLES,
         @JsonProperty("everyone")
         EVERYONE
+    }
+
+    interface Builder {
+        Builder from(AllowedMentions instance);
+
+        Builder addParse(Type element);
+
+        Builder addParse(Type... elements);
+
+        Builder parse(Iterable<Type> elements);
+
+        Builder addAllParse(Iterable<Type> elements);
+
+        Builder addUsers(Snowflake element);
+
+        Builder addUsers(Snowflake... elements);
+
+        Builder users(Iterable<? extends Snowflake> elements);
+
+        Builder addAllUsers(Iterable<? extends Snowflake> elements);
+
+        Builder addRoles(Snowflake element);
+
+        Builder addRoles(Snowflake... elements);
+
+        Builder roles(Iterable<? extends Snowflake> elements);
+
+        Builder addAllRoles(Iterable<? extends Snowflake> elements);
+
+        Builder repliedUser(boolean repliedUser);
+
+        AllowedMentions build();
     }
 }

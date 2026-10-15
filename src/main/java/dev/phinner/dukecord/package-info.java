@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Apache-2.0
 // SPDX-FileCopyrightText: 2026 phinner
 @NullMarked
-@Value.Style(forceJacksonPropertyNames = false)
+@DukecordStyle
 package dev.phinner.dukecord;
 
-import org.immutables.value.Value;
+import dev.phinner.dukecord.util.DukecordStyle;
 import org.jspecify.annotations.NullMarked;

@@ -13,6 +13,10 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableSeparator.class)
 public non-sealed interface Separator extends Component {
 
+    static Builder builder() {
+        return ImmutableSeparator.builder();
+    }
+
     static Separator of() {
         return ImmutableSeparator.builder().build();
     }
@@ -44,5 +48,23 @@ public non-sealed interface Separator extends Component {
         public int value() {
             return this.value;
         }
+    }
+
+    interface Builder {
+        Builder from(Separator instance);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder divider(boolean divider);
+
+        Builder divider(Optional<Boolean> divider);
+
+        Builder spacing(Spacing spacing);
+
+        Builder spacing(Optional<? extends Spacing> spacing);
+
+        Separator build();
     }
 }

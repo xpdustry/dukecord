@@ -37,8 +37,10 @@ public interface MessageBehavior extends DiscordEntityBehavior<Message> {
     /** Mentions of the replied user are disabled unless the spec allows them. */
     default Message reply(final MessageCreateSpec spec) {
         return this.channel()
-                .send(ImmutableMessageCreateSpec.copyOf(spec)
-                        .withMessageReference(MessageReference.of(this.channelId(), this.id())));
+                .send(MessageCreateSpec.builder()
+                        .from(spec)
+                        .messageReference(MessageReference.of(this.channelId(), this.id()))
+                        .build());
     }
 
     default Message reply(final String content) {

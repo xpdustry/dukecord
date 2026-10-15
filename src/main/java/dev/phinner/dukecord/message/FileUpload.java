@@ -14,6 +14,10 @@ import org.immutables.value.Value;
 @Value.Immutable
 public interface FileUpload {
 
+    static Builder builder() {
+        return ImmutableFileUpload.builder();
+    }
+
     static FileUpload of(final Path path) throws FileNotFoundException {
         return of(path.getFileName().toString(), HttpRequest.BodyPublishers.ofFile(path));
     }
@@ -43,4 +47,20 @@ public interface FileUpload {
 
     @Value.Auxiliary
     HttpRequest.BodyPublisher content();
+
+    interface Builder {
+        Builder from(FileUpload instance);
+
+        Builder filename(String filename);
+
+        Builder description(String description);
+
+        Builder description(Optional<String> description);
+
+        Builder spoiler(boolean spoiler);
+
+        Builder content(HttpRequest.BodyPublisher content);
+
+        FileUpload build();
+    }
 }

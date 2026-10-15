@@ -18,7 +18,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableEntitySelectMenu.class)
 public non-sealed interface EntitySelectMenu extends Component {
 
-    static ImmutableEntitySelectMenu.Builder builder(final Kind kind) {
+    static Builder builder(final Kind kind) {
         return ImmutableEntitySelectMenu.builder().type(kind.type);
     }
 
@@ -78,6 +78,10 @@ public non-sealed interface EntitySelectMenu extends Component {
     @JsonDeserialize(as = ImmutableEntitySelectMenu.DefaultValue.class)
     interface DefaultValue {
 
+        static Builder builder() {
+            return ImmutableEntitySelectMenu.DefaultValue.builder();
+        }
+
         static DefaultValue user(final Snowflake id) {
             return ImmutableEntitySelectMenu.DefaultValue.builder()
                     .id(id)
@@ -113,5 +117,71 @@ public non-sealed interface EntitySelectMenu extends Component {
             @JsonProperty("channel")
             CHANNEL
         }
+
+        interface Builder {
+            Builder from(DefaultValue instance);
+
+            Builder id(Snowflake id);
+
+            Builder type(DefaultValue.Type type);
+
+            DefaultValue build();
+        }
+    }
+
+    interface Builder {
+        Builder from(EntitySelectMenu instance);
+
+        Builder type(int type);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder customId(String customId);
+
+        Builder placeholder(String placeholder);
+
+        Builder placeholder(Optional<String> placeholder);
+
+        Builder minValues(int minValues);
+
+        Builder minValues(Optional<Integer> minValues);
+
+        Builder maxValues(int maxValues);
+
+        Builder maxValues(Optional<Integer> maxValues);
+
+        Builder required(boolean required);
+
+        Builder required(Optional<Boolean> required);
+
+        Builder disabled(boolean disabled);
+
+        Builder addChannelTypes(int element);
+
+        Builder addChannelTypes(int... elements);
+
+        Builder channelTypes(Iterable<Integer> elements);
+
+        Builder addAllChannelTypes(Iterable<Integer> elements);
+
+        Builder addDefaultValues(DefaultValue element);
+
+        Builder addDefaultValues(DefaultValue... elements);
+
+        Builder defaultValues(Iterable<? extends DefaultValue> elements);
+
+        Builder addAllDefaultValues(Iterable<? extends DefaultValue> elements);
+
+        Builder addValues(Snowflake element);
+
+        Builder addValues(Snowflake... elements);
+
+        Builder values(Iterable<? extends Snowflake> elements);
+
+        Builder addAllValues(Iterable<? extends Snowflake> elements);
+
+        EntitySelectMenu build();
     }
 }

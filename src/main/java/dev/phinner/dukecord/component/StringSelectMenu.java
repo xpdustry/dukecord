@@ -15,7 +15,7 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableStringSelectMenu.class)
 public non-sealed interface StringSelectMenu extends Component {
 
-    static ImmutableStringSelectMenu.Builder builder() {
+    static Builder builder() {
         return ImmutableStringSelectMenu.builder();
     }
 
@@ -51,7 +51,7 @@ public non-sealed interface StringSelectMenu extends Component {
     @JsonDeserialize(as = ImmutableStringSelectMenu.Option.class)
     interface Option {
 
-        static ImmutableStringSelectMenu.Option.Builder builder() {
+        static Builder builder() {
             return ImmutableStringSelectMenu.Option.builder();
         }
 
@@ -73,5 +73,71 @@ public non-sealed interface StringSelectMenu extends Component {
         default boolean selected() {
             return false;
         }
+
+        interface Builder {
+            Builder from(Option instance);
+
+            Builder label(String label);
+
+            Builder value(String value);
+
+            Builder description(String description);
+
+            Builder description(Optional<String> description);
+
+            Builder emoji(Emoji emoji);
+
+            Builder emoji(Optional<? extends Emoji> emoji);
+
+            Builder selected(boolean selected);
+
+            Option build();
+        }
+    }
+
+    interface Builder {
+        Builder from(StringSelectMenu instance);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder customId(String customId);
+
+        Builder addOptions(Option element);
+
+        Builder addOptions(Option... elements);
+
+        Builder options(Iterable<? extends Option> elements);
+
+        Builder addAllOptions(Iterable<? extends Option> elements);
+
+        Builder placeholder(String placeholder);
+
+        Builder placeholder(Optional<String> placeholder);
+
+        Builder minValues(int minValues);
+
+        Builder minValues(Optional<Integer> minValues);
+
+        Builder maxValues(int maxValues);
+
+        Builder maxValues(Optional<Integer> maxValues);
+
+        Builder required(boolean required);
+
+        Builder required(Optional<Boolean> required);
+
+        Builder disabled(boolean disabled);
+
+        Builder addValues(String element);
+
+        Builder addValues(String... elements);
+
+        Builder values(Iterable<String> elements);
+
+        Builder addAllValues(Iterable<String> elements);
+
+        StringSelectMenu build();
     }
 }

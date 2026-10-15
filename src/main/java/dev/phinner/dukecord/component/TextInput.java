@@ -16,16 +16,16 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableTextInput.class)
 public non-sealed interface TextInput extends Component {
 
-    static ImmutableTextInput.Builder builder() {
+    static Builder builder() {
         return ImmutableTextInput.builder();
     }
 
-    static ImmutableTextInput singleLine(final String customId) {
-        return builder().customId(customId).style(Style.SHORT).build();
+    static Builder singleLine(final String customId) {
+        return builder().customId(customId).style(Style.SHORT);
     }
 
-    static ImmutableTextInput paragraph(final String customId) {
-        return builder().customId(customId).style(Style.PARAGRAPH).build();
+    static Builder paragraph(final String customId) {
+        return builder().customId(customId).style(Style.PARAGRAPH);
     }
 
     @Override
@@ -69,5 +69,39 @@ public non-sealed interface TextInput extends Component {
         public int value() {
             return this.value;
         }
+    }
+
+    interface Builder {
+        Builder from(TextInput instance);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder customId(String customId);
+
+        Builder style(Style style);
+
+        Builder value(String value);
+
+        Builder value(Optional<String> value);
+
+        Builder placeholder(String placeholder);
+
+        Builder placeholder(Optional<String> placeholder);
+
+        Builder required(boolean required);
+
+        Builder required(Optional<Boolean> required);
+
+        Builder minLength(int minLength);
+
+        Builder minLength(Optional<Integer> minLength);
+
+        Builder maxLength(int maxLength);
+
+        Builder maxLength(Optional<Integer> maxLength);
+
+        TextInput build();
     }
 }

@@ -11,7 +11,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableRoleSpec.class)
 public interface RoleSpec {
 
-    static ImmutableRoleSpec.Builder builder() {
+    static Builder builder() {
         return ImmutableRoleSpec.builder();
     }
 
@@ -26,4 +26,34 @@ public interface RoleSpec {
     Optional<Boolean> mentionable();
 
     Optional<String> unicodeEmoji();
+
+    interface Builder {
+        Builder from(RoleSpec instance);
+
+        Builder name(String name);
+
+        Builder name(Optional<String> name);
+
+        Builder permissions(PermissionSet permissions);
+
+        Builder permissions(Optional<? extends PermissionSet> permissions);
+
+        Builder color(int color);
+
+        Builder color(Optional<Integer> color);
+
+        Builder hoist(boolean hoist);
+
+        Builder hoist(Optional<Boolean> hoist);
+
+        Builder mentionable(boolean mentionable);
+
+        Builder mentionable(Optional<Boolean> mentionable);
+
+        Builder unicodeEmoji(String unicodeEmoji);
+
+        Builder unicodeEmoji(Optional<String> unicodeEmoji);
+
+        RoleSpec build();
+    }
 }

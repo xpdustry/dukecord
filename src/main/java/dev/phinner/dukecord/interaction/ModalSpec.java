@@ -12,6 +12,10 @@ import tools.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableModalSpec.class)
 public interface ModalSpec {
 
+    static Builder builder() {
+        return ImmutableModalSpec.builder();
+    }
+
     static ModalSpec of(final String customId, final String title, final Component... components) {
         return ImmutableModalSpec.builder()
                 .customId(customId)
@@ -25,4 +29,22 @@ public interface ModalSpec {
     String title();
 
     List<Component> components();
+
+    interface Builder {
+        Builder from(ModalSpec instance);
+
+        Builder customId(String customId);
+
+        Builder title(String title);
+
+        Builder addComponents(Component element);
+
+        Builder addComponents(Component... elements);
+
+        Builder components(Iterable<? extends Component> elements);
+
+        Builder addAllComponents(Iterable<? extends Component> elements);
+
+        ModalSpec build();
+    }
 }

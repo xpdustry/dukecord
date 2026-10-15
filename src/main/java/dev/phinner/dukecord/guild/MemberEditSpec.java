@@ -17,7 +17,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableMemberEditSpec.class)
 public interface MemberEditSpec {
 
-    static ImmutableMemberEditSpec.Builder builder() {
+    static Builder builder() {
         return ImmutableMemberEditSpec.builder();
     }
 
@@ -37,4 +37,34 @@ public interface MemberEditSpec {
 
     /** Moves the member to another voice channel. */
     Optional<Snowflake> channelId();
+
+    interface Builder {
+        Builder from(MemberEditSpec instance);
+
+        Builder nick(String nick);
+
+        Builder nick(Optional<String> nick);
+
+        Builder roles(List<Snowflake> roles);
+
+        Builder roles(Optional<? extends List<Snowflake>> roles);
+
+        Builder communicationDisabledUntil(Instant communicationDisabledUntil);
+
+        Builder communicationDisabledUntil(Optional<? extends Instant> communicationDisabledUntil);
+
+        Builder mute(boolean mute);
+
+        Builder mute(Optional<Boolean> mute);
+
+        Builder deaf(boolean deaf);
+
+        Builder deaf(Optional<Boolean> deaf);
+
+        Builder channelId(Snowflake channelId);
+
+        Builder channelId(Optional<? extends Snowflake> channelId);
+
+        MemberEditSpec build();
+    }
 }

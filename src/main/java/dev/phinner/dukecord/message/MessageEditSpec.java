@@ -18,7 +18,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableMessageEditSpec.class)
 public interface MessageEditSpec {
 
-    static ImmutableMessageEditSpec.Builder builder() {
+    static Builder builder() {
         return ImmutableMessageEditSpec.builder();
     }
 
@@ -50,4 +50,40 @@ public interface MessageEditSpec {
      */
     @JsonIgnore
     Optional<List<Snowflake>> retainedAttachments();
+
+    interface Builder {
+        Builder from(MessageEditSpec instance);
+
+        Builder content(String content);
+
+        Builder content(Optional<String> content);
+
+        Builder embeds(List<Embed> embeds);
+
+        Builder embeds(Optional<? extends List<Embed>> embeds);
+
+        Builder components(List<Component> components);
+
+        Builder components(Optional<? extends List<Component>> components);
+
+        Builder allowedMentions(AllowedMentions allowedMentions);
+
+        Builder flags(int flags);
+
+        Builder flags(Optional<Integer> flags);
+
+        Builder addFiles(FileUpload element);
+
+        Builder addFiles(FileUpload... elements);
+
+        Builder files(Iterable<? extends FileUpload> elements);
+
+        Builder addAllFiles(Iterable<? extends FileUpload> elements);
+
+        Builder retainedAttachments(List<Snowflake> retainedAttachments);
+
+        Builder retainedAttachments(Optional<? extends List<Snowflake>> retainedAttachments);
+
+        MessageEditSpec build();
+    }
 }

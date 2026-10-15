@@ -15,7 +15,7 @@ import tools.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(as = ImmutableMessageCreateSpec.class)
 public interface MessageCreateSpec {
 
-    static ImmutableMessageCreateSpec.Builder builder() {
+    static Builder builder() {
         return ImmutableMessageCreateSpec.builder();
     }
 
@@ -53,4 +53,50 @@ public interface MessageCreateSpec {
 
     /** See {@link MessageFlags}. */
     Optional<Integer> flags();
+
+    interface Builder {
+        Builder from(MessageCreateSpec instance);
+
+        Builder content(String content);
+
+        Builder content(Optional<String> content);
+
+        Builder addEmbeds(Embed element);
+
+        Builder addEmbeds(Embed... elements);
+
+        Builder embeds(Iterable<? extends Embed> elements);
+
+        Builder addAllEmbeds(Iterable<? extends Embed> elements);
+
+        Builder addComponents(Component element);
+
+        Builder addComponents(Component... elements);
+
+        Builder components(Iterable<? extends Component> elements);
+
+        Builder addAllComponents(Iterable<? extends Component> elements);
+
+        Builder addFiles(FileUpload element);
+
+        Builder addFiles(FileUpload... elements);
+
+        Builder files(Iterable<? extends FileUpload> elements);
+
+        Builder addAllFiles(Iterable<? extends FileUpload> elements);
+
+        Builder allowedMentions(AllowedMentions allowedMentions);
+
+        Builder messageReference(MessageReference messageReference);
+
+        Builder messageReference(Optional<? extends MessageReference> messageReference);
+
+        Builder tts(boolean tts);
+
+        Builder flags(int flags);
+
+        Builder flags(Optional<Integer> flags);
+
+        MessageCreateSpec build();
+    }
 }

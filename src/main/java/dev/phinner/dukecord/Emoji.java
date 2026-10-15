@@ -11,6 +11,10 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableEmoji.class)
 public interface Emoji {
 
+    static Builder builder() {
+        return ImmutableEmoji.builder();
+    }
+
     static Emoji unicode(final String emoji) {
         return ImmutableEmoji.builder().name(emoji).build();
     }
@@ -32,5 +36,21 @@ public interface Emoji {
     @Value.Default
     default boolean animated() {
         return false;
+    }
+
+    interface Builder {
+        Builder from(Emoji instance);
+
+        Builder id(Snowflake id);
+
+        Builder id(Optional<? extends Snowflake> id);
+
+        Builder name(String name);
+
+        Builder name(Optional<String> name);
+
+        Builder animated(boolean animated);
+
+        Emoji build();
     }
 }

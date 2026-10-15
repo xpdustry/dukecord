@@ -13,6 +13,10 @@ import tools.jackson.databind.annotation.JsonDeserialize;
 @JsonDeserialize(as = ImmutableMediaGallery.class)
 public non-sealed interface MediaGallery extends Component {
 
+    static Builder builder() {
+        return ImmutableMediaGallery.builder();
+    }
+
     static MediaGallery of(final String... urls) {
         final var builder = ImmutableMediaGallery.builder();
         for (final var url : urls) {
@@ -33,6 +37,10 @@ public non-sealed interface MediaGallery extends Component {
     @JsonDeserialize(as = ImmutableMediaGallery.Item.class)
     interface Item {
 
+        static Builder builder() {
+            return ImmutableMediaGallery.Item.builder();
+        }
+
         static Item of(final String url) {
             return ImmutableMediaGallery.Item.builder()
                     .media(UnfurledMedia.of(url))
@@ -47,5 +55,37 @@ public non-sealed interface MediaGallery extends Component {
         default boolean spoiler() {
             return false;
         }
+
+        interface Builder {
+            Builder from(Item instance);
+
+            Builder media(UnfurledMedia media);
+
+            Builder description(String description);
+
+            Builder description(Optional<String> description);
+
+            Builder spoiler(boolean spoiler);
+
+            Item build();
+        }
+    }
+
+    interface Builder {
+        Builder from(MediaGallery instance);
+
+        Builder id(int id);
+
+        Builder id(Optional<Integer> id);
+
+        Builder addItems(Item element);
+
+        Builder addItems(Item... elements);
+
+        Builder items(Iterable<? extends Item> elements);
+
+        Builder addAllItems(Iterable<? extends Item> elements);
+
+        MediaGallery build();
     }
 }
