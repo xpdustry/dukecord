@@ -277,12 +277,7 @@ public class DiscordGatewayImpl implements DiscordGateway {
 
         final var opcode = GatewayOpcode.from(event.getInt("op"));
 
-        if (opcode.isEmpty()) {
-            log.trace("Received unknown opcode {}", event.getInt("op"));
-            return;
-        }
-
-        switch (opcode.get()) {
+        switch (opcode) {
             case HELLO -> {
                 final var rawInterval = event.getObject("d").getLong("heartbeat_interval");
                 final var interval = Duration.ofMillis(rawInterval);
@@ -362,6 +357,9 @@ public class DiscordGatewayImpl implements DiscordGateway {
 
                 if (!resumable) this.session = null;
                 websocket.close(CLIENT_RECONNECT, "Session invalidated by Discord.");
+            }
+            case UNKNOWN -> {
+                log.trace("Received unknown opcode {}", event.getInt("op"));
             }
             default -> {
                 log.debug("Unhandled gateway event: {}", event);

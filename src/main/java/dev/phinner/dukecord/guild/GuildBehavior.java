@@ -29,4 +29,25 @@ public interface GuildBehavior extends DiscordEntityBehavior<Guild> {
     default Guild fetch(final boolean force) {
         return this.duke().guilds().fetchById(this.id(), force);
     }
+
+    default MemberBehavior member(final Snowflake userId) {
+        return MemberBehavior.of(this.duke(), this.id(), userId);
+    }
+
+    default RoleBehavior role(final Snowflake roleId) {
+        return RoleBehavior.of(this.duke(), this.id(), roleId);
+    }
+
+    /** The role every member has, which shares the guild's ID. */
+    default RoleBehavior everyoneRole() {
+        return this.role(this.id());
+    }
+
+    default Role createRole(final RoleSpec spec) {
+        return this.duke().roles().rest().create(this.id(), spec);
+    }
+
+    default Role createRole(final RoleSpec spec, final String reason) {
+        return this.duke().roles().rest().create(this.id(), spec, reason);
+    }
 }

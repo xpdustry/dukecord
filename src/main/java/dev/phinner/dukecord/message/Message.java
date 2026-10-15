@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import dev.phinner.dukecord.DiscordEntity;
 import dev.phinner.dukecord.Snowflake;
 import dev.phinner.dukecord.channel.MessageChannelBehavior;
+import dev.phinner.dukecord.component.Component;
 import dev.phinner.dukecord.guild.GuildBehavior;
 import dev.phinner.dukecord.user.User;
 import java.time.Instant;
@@ -64,4 +65,13 @@ public interface Message extends DiscordEntity, MessageBehavior {
     }
 
     List<User> mentions();
+
+    List<Attachment> attachments();
+
+    List<Embed> embeds();
+
+    List<Component> components();
+
+    /** Set on replies, forwards and crossposts. */
+    Optional<MessageReference> messageReference();
 }

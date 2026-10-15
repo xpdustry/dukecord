@@ -11,6 +11,9 @@ public interface MessageRestOperations {
 
     Message create(final Snowflake channelId, final MessageCreateSpec spec);
 
+    /** Only the author can change content, embeds and files; anyone allowed to manage messages can change flags. */
+    Message edit(final Snowflake channelId, final Snowflake messageId, final MessageEditSpec spec);
+
     void delete(final Snowflake channelId, final Snowflake messageId);
 
     void delete(final Snowflake channelId, final Snowflake messageId, final String reason);

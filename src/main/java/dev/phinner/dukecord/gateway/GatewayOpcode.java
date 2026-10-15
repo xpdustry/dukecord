@@ -4,11 +4,11 @@ package dev.phinner.dukecord.gateway;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum GatewayOpcode {
+    UNKNOWN(-1),
     DISPATCH(0),
     HEARTBEAT(1),
     IDENTIFY(2),
@@ -34,8 +34,8 @@ public enum GatewayOpcode {
         this.code = code;
     }
 
-    public static Optional<GatewayOpcode> from(final int code) {
-        return Optional.ofNullable(REVERSED.get(code));
+    public static GatewayOpcode from(final int code) {
+        return REVERSED.getOrDefault(code, UNKNOWN);
     }
 
     /**

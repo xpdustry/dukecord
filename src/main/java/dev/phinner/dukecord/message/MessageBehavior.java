@@ -45,6 +45,14 @@ public interface MessageBehavior extends DiscordEntityBehavior<Message> {
         return this.reply(MessageCreateSpec.of(content));
     }
 
+    default Message edit(final MessageEditSpec spec) {
+        return this.duke().messages().rest().edit(this.channelId(), this.id(), spec);
+    }
+
+    default Message edit(final String content) {
+        return this.edit(MessageEditSpec.of(content));
+    }
+
     default void delete() {
         this.duke().messages().rest().delete(this.channelId(), this.id());
     }

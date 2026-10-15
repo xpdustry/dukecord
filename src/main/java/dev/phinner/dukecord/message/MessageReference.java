@@ -5,10 +5,11 @@ package dev.phinner.dukecord.message;
 import dev.phinner.dukecord.Snowflake;
 import java.util.Optional;
 import org.immutables.value.Value;
-import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
+/** Points at another message, for replies, forwards and crossposts. */
 @Value.Immutable
-@JsonSerialize(as = ImmutableMessageReference.class)
+@JsonDeserialize(as = ImmutableMessageReference.class)
 public interface MessageReference {
 
     static MessageReference of(final Snowflake channelId, final Snowflake messageId) {
@@ -18,9 +19,17 @@ public interface MessageReference {
                 .build();
     }
 
+    /** 0 for a reply or crosspost, 1 for a forward. */
+    @Value.Default
+    default int type() {
+        return 0;
+    }
+
     Snowflake messageId();
 
     Optional<Snowflake> channelId();
+
+    Optional<Snowflake> guildId();
 
     Optional<Boolean> failIfNotExists();
 }
