@@ -32,9 +32,10 @@ public interface FileUpload {
     }
 
     private static FileUpload of(final String filename, final HttpRequest.BodyPublisher content) {
-        return ImmutableFileUpload.builder().filename(filename).content(content).build();
+        return ImmutableFileUpload.of(filename, content);
     }
 
+    @Value.Parameter
     String filename();
 
     /** Alt text. */
@@ -46,20 +47,19 @@ public interface FileUpload {
     }
 
     @Value.Auxiliary
+    @Value.Parameter
     HttpRequest.BodyPublisher content();
 
     interface Builder {
-        Builder from(FileUpload instance);
+        Builder from(final FileUpload instance);
 
-        Builder filename(String filename);
+        Builder filename(final String filename);
 
-        Builder description(String description);
+        Builder description(final String description);
 
-        Builder description(Optional<String> description);
+        Builder spoiler(final boolean spoiler);
 
-        Builder spoiler(boolean spoiler);
-
-        Builder content(HttpRequest.BodyPublisher content);
+        Builder content(final HttpRequest.BodyPublisher content);
 
         FileUpload build();
     }

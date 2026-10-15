@@ -17,10 +17,7 @@ public interface MessageReference {
     }
 
     static MessageReference of(final Snowflake channelId, final Snowflake messageId) {
-        return ImmutableMessageReference.builder()
-                .channelId(channelId)
-                .messageId(messageId)
-                .build();
+        return ImmutableMessageReference.of(messageId, Optional.of(channelId));
     }
 
     /** 0 for a reply or crosspost, 1 for a forward. */
@@ -29,8 +26,10 @@ public interface MessageReference {
         return 0;
     }
 
+    @Value.Parameter
     Snowflake messageId();
 
+    @Value.Parameter
     Optional<Snowflake> channelId();
 
     Optional<Snowflake> guildId();
@@ -38,23 +37,17 @@ public interface MessageReference {
     Optional<Boolean> failIfNotExists();
 
     interface Builder {
-        Builder from(MessageReference instance);
+        Builder from(final MessageReference instance);
 
-        Builder type(int type);
+        Builder type(final int type);
 
-        Builder messageId(Snowflake messageId);
+        Builder messageId(final Snowflake messageId);
 
-        Builder channelId(Snowflake channelId);
+        Builder channelId(final Snowflake channelId);
 
-        Builder channelId(Optional<? extends Snowflake> channelId);
+        Builder guildId(final Snowflake guildId);
 
-        Builder guildId(Snowflake guildId);
-
-        Builder guildId(Optional<? extends Snowflake> guildId);
-
-        Builder failIfNotExists(boolean failIfNotExists);
-
-        Builder failIfNotExists(Optional<Boolean> failIfNotExists);
+        Builder failIfNotExists(final boolean failIfNotExists);
 
         MessageReference build();
     }

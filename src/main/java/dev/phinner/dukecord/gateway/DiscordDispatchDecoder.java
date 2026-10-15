@@ -5,7 +5,7 @@ package dev.phinner.dukecord.gateway;
 @FunctionalInterface
 public interface DiscordDispatchDecoder {
 
-    DiscordEvent decode(String type, String payload);
+    DiscordEvent decode(final String type, final String payload);
 
     static DiscordDispatchDecoder unknownOnly() {
         return UnknownDiscordEvent::new;

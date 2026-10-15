@@ -29,31 +29,19 @@ public interface RoleSpec {
     Optional<String> unicodeEmoji();
 
     interface Builder {
-        Builder from(RoleSpec instance);
+        Builder from(final RoleSpec instance);
 
-        Builder name(String name);
+        Builder name(final String name);
 
-        Builder name(Optional<String> name);
+        Builder permissions(final PermissionSet permissions);
 
-        Builder permissions(PermissionSet permissions);
+        Builder color(final Color color);
 
-        Builder permissions(Optional<? extends PermissionSet> permissions);
+        Builder hoist(final boolean hoist);
 
-        Builder color(Color color);
+        Builder mentionable(final boolean mentionable);
 
-        Builder color(Optional<? extends Color> color);
-
-        Builder hoist(boolean hoist);
-
-        Builder hoist(Optional<Boolean> hoist);
-
-        Builder mentionable(boolean mentionable);
-
-        Builder mentionable(Optional<Boolean> mentionable);
-
-        Builder unicodeEmoji(String unicodeEmoji);
-
-        Builder unicodeEmoji(Optional<String> unicodeEmoji);
+        Builder unicodeEmoji(final String unicodeEmoji);
 
         RoleSpec build();
     }

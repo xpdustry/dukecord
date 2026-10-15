@@ -19,23 +19,23 @@ public non-sealed interface Button extends Component {
     }
 
     static Button primary(final String customId, final String label) {
-        return builder().style(Style.PRIMARY).customId(customId).label(label).build();
+        return ImmutableButton.of(Style.PRIMARY, Optional.of(label), Optional.of(customId), Optional.empty());
     }
 
     static Button secondary(final String customId, final String label) {
-        return builder().style(Style.SECONDARY).customId(customId).label(label).build();
+        return ImmutableButton.of(Style.SECONDARY, Optional.of(label), Optional.of(customId), Optional.empty());
     }
 
     static Button success(final String customId, final String label) {
-        return builder().style(Style.SUCCESS).customId(customId).label(label).build();
+        return ImmutableButton.of(Style.SUCCESS, Optional.of(label), Optional.of(customId), Optional.empty());
     }
 
     static Button danger(final String customId, final String label) {
-        return builder().style(Style.DANGER).customId(customId).label(label).build();
+        return ImmutableButton.of(Style.DANGER, Optional.of(label), Optional.of(customId), Optional.empty());
     }
 
     static Button link(final String url, final String label) {
-        return builder().style(Style.LINK).url(url).label(label).build();
+        return ImmutableButton.of(Style.LINK, Optional.of(label), Optional.empty(), Optional.of(url));
     }
 
     @Override
@@ -44,16 +44,20 @@ public non-sealed interface Button extends Component {
         return 2;
     }
 
+    @Value.Parameter
     Style style();
 
+    @Value.Parameter
     Optional<String> label();
 
     Optional<Emoji> emoji();
 
     /** Absent on link and premium buttons. */
+    @Value.Parameter
     Optional<String> customId();
 
     /** Only on link buttons. */
+    @Value.Parameter
     Optional<String> url();
 
     /** Only on premium buttons. */
@@ -91,35 +95,23 @@ public non-sealed interface Button extends Component {
     }
 
     interface Builder {
-        Builder from(Button instance);
+        Builder from(final Button instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder style(final Style style);
 
-        Builder style(Style style);
+        Builder label(final String label);
 
-        Builder label(String label);
+        Builder emoji(final Emoji emoji);
 
-        Builder label(Optional<String> label);
+        Builder customId(final String customId);
 
-        Builder emoji(Emoji emoji);
+        Builder url(final String url);
 
-        Builder emoji(Optional<? extends Emoji> emoji);
+        Builder skuId(final Snowflake skuId);
 
-        Builder customId(String customId);
-
-        Builder customId(Optional<String> customId);
-
-        Builder url(String url);
-
-        Builder url(Optional<String> url);
-
-        Builder skuId(Snowflake skuId);
-
-        Builder skuId(Optional<? extends Snowflake> skuId);
-
-        Builder disabled(boolean disabled);
+        Builder disabled(final boolean disabled);
 
         Button build();
     }

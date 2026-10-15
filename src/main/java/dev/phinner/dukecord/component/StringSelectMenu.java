@@ -19,14 +19,20 @@ public non-sealed interface StringSelectMenu extends Component {
         return ImmutableStringSelectMenu.builder();
     }
 
+    static StringSelectMenu of(final String customId, final Option... options) {
+        return ImmutableStringSelectMenu.of(customId, List.of(options));
+    }
+
     @Override
     @Value.Derived
     default int type() {
         return 3;
     }
 
+    @Value.Parameter
     String customId();
 
+    @Value.Parameter
     List<Option> options();
 
     Optional<String> placeholder();
@@ -56,11 +62,13 @@ public non-sealed interface StringSelectMenu extends Component {
         }
 
         static Option of(final String label, final String value) {
-            return builder().label(label).value(value).build();
+            return ImmutableStringSelectMenu.Option.of(label, value);
         }
 
+        @Value.Parameter
         String label();
 
+        @Value.Parameter
         String value();
 
         Optional<String> description();
@@ -75,68 +83,54 @@ public non-sealed interface StringSelectMenu extends Component {
         }
 
         interface Builder {
-            Builder from(Option instance);
+            Builder from(final Option instance);
 
-            Builder label(String label);
+            Builder label(final String label);
 
-            Builder value(String value);
+            Builder value(final String value);
 
-            Builder description(String description);
+            Builder description(final String description);
 
-            Builder description(Optional<String> description);
+            Builder emoji(final Emoji emoji);
 
-            Builder emoji(Emoji emoji);
-
-            Builder emoji(Optional<? extends Emoji> emoji);
-
-            Builder selected(boolean selected);
+            Builder selected(final boolean selected);
 
             Option build();
         }
     }
 
     interface Builder {
-        Builder from(StringSelectMenu instance);
+        Builder from(final StringSelectMenu instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder customId(final String customId);
 
-        Builder customId(String customId);
+        Builder addOptions(final Option element);
 
-        Builder addOptions(Option element);
+        Builder addOptions(final Option... elements);
 
-        Builder addOptions(Option... elements);
+        Builder options(final Iterable<? extends Option> elements);
 
-        Builder options(Iterable<? extends Option> elements);
+        Builder addAllOptions(final Iterable<? extends Option> elements);
 
-        Builder addAllOptions(Iterable<? extends Option> elements);
+        Builder placeholder(final String placeholder);
 
-        Builder placeholder(String placeholder);
+        Builder minValues(final int minValues);
 
-        Builder placeholder(Optional<String> placeholder);
+        Builder maxValues(final int maxValues);
 
-        Builder minValues(int minValues);
+        Builder required(final boolean required);
 
-        Builder minValues(Optional<Integer> minValues);
+        Builder disabled(final boolean disabled);
 
-        Builder maxValues(int maxValues);
+        Builder addValues(final String element);
 
-        Builder maxValues(Optional<Integer> maxValues);
+        Builder addValues(final String... elements);
 
-        Builder required(boolean required);
+        Builder values(final Iterable<String> elements);
 
-        Builder required(Optional<Boolean> required);
-
-        Builder disabled(boolean disabled);
-
-        Builder addValues(String element);
-
-        Builder addValues(String... elements);
-
-        Builder values(Iterable<String> elements);
-
-        Builder addAllValues(Iterable<String> elements);
+        Builder addAllValues(final Iterable<String> elements);
 
         StringSelectMenu build();
     }

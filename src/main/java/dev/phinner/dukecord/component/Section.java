@@ -3,7 +3,6 @@
 package dev.phinner.dukecord.component;
 
 import java.util.List;
-import java.util.Optional;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -17,10 +16,7 @@ public non-sealed interface Section extends Component {
     }
 
     static Section of(final Component accessory, final TextDisplay... texts) {
-        return ImmutableSection.builder()
-                .accessory(accessory)
-                .addComponents(texts)
-                .build();
+        return ImmutableSection.of(List.of(texts), accessory);
     }
 
     @Override
@@ -29,27 +25,27 @@ public non-sealed interface Section extends Component {
         return 9;
     }
 
+    @Value.Parameter
     List<TextDisplay> components();
 
     /** A {@link Button} or a {@link Thumbnail}. */
+    @Value.Parameter
     Component accessory();
 
     interface Builder {
-        Builder from(Section instance);
+        Builder from(final Section instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder addComponents(final TextDisplay element);
 
-        Builder addComponents(TextDisplay element);
+        Builder addComponents(final TextDisplay... elements);
 
-        Builder addComponents(TextDisplay... elements);
+        Builder components(final Iterable<? extends TextDisplay> elements);
 
-        Builder components(Iterable<? extends TextDisplay> elements);
+        Builder addAllComponents(final Iterable<? extends TextDisplay> elements);
 
-        Builder addAllComponents(Iterable<? extends TextDisplay> elements);
-
-        Builder accessory(Component accessory);
+        Builder accessory(final Component accessory);
 
         Section build();
     }

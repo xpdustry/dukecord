@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.component;
 
-import java.util.Optional;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -16,7 +15,7 @@ public non-sealed interface TextDisplay extends Component {
     }
 
     static TextDisplay of(final String content) {
-        return ImmutableTextDisplay.builder().content(content).build();
+        return ImmutableTextDisplay.of(content);
     }
 
     @Override
@@ -27,18 +26,17 @@ public non-sealed interface TextDisplay extends Component {
 
     /** Not sent back in a submitted modal. */
     @Value.Default
+    @Value.Parameter
     default String content() {
         return "";
     }
 
     interface Builder {
-        Builder from(TextDisplay instance);
+        Builder from(final TextDisplay instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
-
-        Builder content(String content);
+        Builder content(final String content);
 
         TextDisplay build();
     }

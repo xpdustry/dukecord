@@ -16,7 +16,7 @@ public non-sealed interface Label extends Component {
     }
 
     static Label of(final String label, final Component component) {
-        return ImmutableLabel.builder().label(label).component(component).build();
+        return ImmutableLabel.of(label, component);
     }
 
     @Override
@@ -27,28 +27,26 @@ public non-sealed interface Label extends Component {
 
     /** Not sent back in a submitted modal. */
     @Value.Default
+    @Value.Parameter
     default String label() {
         return "";
     }
 
     Optional<String> description();
 
+    @Value.Parameter
     Component component();
 
     interface Builder {
-        Builder from(Label instance);
+        Builder from(final Label instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder label(final String label);
 
-        Builder label(String label);
+        Builder description(final String description);
 
-        Builder description(String description);
-
-        Builder description(Optional<String> description);
-
-        Builder component(Component component);
+        Builder component(final Component component);
 
         Label build();
     }

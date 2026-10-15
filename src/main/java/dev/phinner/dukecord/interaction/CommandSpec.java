@@ -20,29 +20,34 @@ public interface CommandSpec {
     }
 
     static CommandSpec chatInput(final String name, final String description, final CommandOption... options) {
-        return builder().name(name).description(description).addOptions(options).build();
+        return ImmutableCommandSpec.of(
+                ApplicationCommand.Type.CHAT_INPUT, name, Optional.of(description), List.of(options));
     }
 
     static CommandSpec user(final String name) {
-        return builder().type(ApplicationCommand.Type.USER).name(name).build();
+        return ImmutableCommandSpec.of(ApplicationCommand.Type.USER, name, Optional.empty(), List.of());
     }
 
     static CommandSpec message(final String name) {
-        return builder().type(ApplicationCommand.Type.MESSAGE).name(name).build();
+        return ImmutableCommandSpec.of(ApplicationCommand.Type.MESSAGE, name, Optional.empty(), List.of());
     }
 
     @Value.Default
+    @Value.Parameter
     default ApplicationCommand.Type type() {
         return ApplicationCommand.Type.CHAT_INPUT;
     }
 
     /** Lowercase for slash commands. */
+    @Value.Parameter
     String name();
 
     /** Required for slash commands, absent for the others. */
+    @Value.Parameter
     Optional<String> description();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Value.Parameter
     List<CommandOption> options();
 
     /** Who may use the command unless a guild says otherwise. {@link PermissionSet#NONE} limits it to admins. */
@@ -55,39 +60,33 @@ public interface CommandSpec {
     Optional<Boolean> nsfw();
 
     interface Builder {
-        Builder from(CommandSpec instance);
+        Builder from(final CommandSpec instance);
 
-        Builder type(ApplicationCommand.Type type);
+        Builder type(final ApplicationCommand.Type type);
 
-        Builder name(String name);
+        Builder name(final String name);
 
-        Builder description(String description);
+        Builder description(final String description);
 
-        Builder description(Optional<String> description);
+        Builder addOptions(final CommandOption element);
 
-        Builder addOptions(CommandOption element);
+        Builder addOptions(final CommandOption... elements);
 
-        Builder addOptions(CommandOption... elements);
+        Builder options(final Iterable<? extends CommandOption> elements);
 
-        Builder options(Iterable<? extends CommandOption> elements);
+        Builder addAllOptions(final Iterable<? extends CommandOption> elements);
 
-        Builder addAllOptions(Iterable<? extends CommandOption> elements);
+        Builder defaultMemberPermissions(final PermissionSet defaultMemberPermissions);
 
-        Builder defaultMemberPermissions(PermissionSet defaultMemberPermissions);
+        Builder addContexts(final InteractionContext element);
 
-        Builder defaultMemberPermissions(Optional<? extends PermissionSet> defaultMemberPermissions);
+        Builder addContexts(final InteractionContext... elements);
 
-        Builder addContexts(InteractionContext element);
+        Builder contexts(final Iterable<InteractionContext> elements);
 
-        Builder addContexts(InteractionContext... elements);
+        Builder addAllContexts(final Iterable<InteractionContext> elements);
 
-        Builder contexts(Iterable<InteractionContext> elements);
-
-        Builder addAllContexts(Iterable<InteractionContext> elements);
-
-        Builder nsfw(boolean nsfw);
-
-        Builder nsfw(Optional<Boolean> nsfw);
+        Builder nsfw(final boolean nsfw);
 
         CommandSpec build();
     }

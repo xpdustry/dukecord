@@ -3,7 +3,6 @@
 package dev.phinner.dukecord.component;
 
 import java.util.List;
-import java.util.Optional;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -17,7 +16,7 @@ public non-sealed interface ActionRow extends Component {
     }
 
     static ActionRow of(final Component... components) {
-        return ImmutableActionRow.builder().addComponents(components).build();
+        return ImmutableActionRow.of(List.of(components));
     }
 
     @Override
@@ -26,22 +25,21 @@ public non-sealed interface ActionRow extends Component {
         return 1;
     }
 
+    @Value.Parameter
     List<Component> components();
 
     interface Builder {
-        Builder from(ActionRow instance);
+        Builder from(final ActionRow instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder addComponents(final Component element);
 
-        Builder addComponents(Component element);
+        Builder addComponents(final Component... elements);
 
-        Builder addComponents(Component... elements);
+        Builder components(final Iterable<? extends Component> elements);
 
-        Builder components(Iterable<? extends Component> elements);
-
-        Builder addAllComponents(Iterable<? extends Component> elements);
+        Builder addAllComponents(final Iterable<? extends Component> elements);
 
         ActionRow build();
     }

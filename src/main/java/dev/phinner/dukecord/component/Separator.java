@@ -9,7 +9,7 @@ import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 /** Vertical space between components, with an optional line. */
-@Value.Immutable
+@Value.Immutable(singleton = true)
 @JsonDeserialize(as = ImmutableSeparator.class)
 public non-sealed interface Separator extends Component {
 
@@ -18,7 +18,7 @@ public non-sealed interface Separator extends Component {
     }
 
     static Separator of() {
-        return ImmutableSeparator.builder().build();
+        return ImmutableSeparator.of();
     }
 
     @Override
@@ -51,19 +51,13 @@ public non-sealed interface Separator extends Component {
     }
 
     interface Builder {
-        Builder from(Separator instance);
+        Builder from(final Separator instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder divider(final boolean divider);
 
-        Builder divider(boolean divider);
-
-        Builder divider(Optional<Boolean> divider);
-
-        Builder spacing(Spacing spacing);
-
-        Builder spacing(Optional<? extends Spacing> spacing);
+        Builder spacing(final Spacing spacing);
 
         Separator build();
     }

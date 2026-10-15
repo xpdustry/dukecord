@@ -18,7 +18,7 @@ public non-sealed interface Container extends Component {
     }
 
     static Container of(final Component... components) {
-        return ImmutableContainer.builder().addComponents(components).build();
+        return ImmutableContainer.of(List.of(components));
     }
 
     @Override
@@ -27,6 +27,7 @@ public non-sealed interface Container extends Component {
         return 17;
     }
 
+    @Value.Parameter
     List<Component> components();
 
     Optional<Color> accentColor();
@@ -37,25 +38,21 @@ public non-sealed interface Container extends Component {
     }
 
     interface Builder {
-        Builder from(Container instance);
+        Builder from(final Container instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder addComponents(final Component element);
 
-        Builder addComponents(Component element);
+        Builder addComponents(final Component... elements);
 
-        Builder addComponents(Component... elements);
+        Builder components(final Iterable<? extends Component> elements);
 
-        Builder components(Iterable<? extends Component> elements);
+        Builder addAllComponents(final Iterable<? extends Component> elements);
 
-        Builder addAllComponents(Iterable<? extends Component> elements);
+        Builder accentColor(final Color accentColor);
 
-        Builder accentColor(Color accentColor);
-
-        Builder accentColor(Optional<? extends Color> accentColor);
-
-        Builder spoiler(boolean spoiler);
+        Builder spoiler(final boolean spoiler);
 
         Container build();
     }

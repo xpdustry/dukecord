@@ -11,8 +11,9 @@ import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
- * A command option, or a subcommand and group. The factories return a builder so that attributes chain, as in
- * {@code CommandOption.string("map", "The map").required(true).build()}.
+ * A command option, or a subcommand and group. The factories cover the common cases, such as
+ * {@code CommandOption.string("map", "The map", true)}, and {@link #builder()} the rest, such as autocomplete or
+ * value ranges.
  */
 @Value.Immutable
 @Value.Enclosing
@@ -23,64 +24,126 @@ public interface CommandOption {
         return ImmutableCommandOption.builder();
     }
 
-    static Builder string(final String name, final String description) {
-        return of(Type.STRING, name, description);
+    static CommandOption string(final String name, final String description) {
+        return of(Type.STRING, name, description, Optional.empty(), List.of(), List.of());
     }
 
-    static Builder integer(final String name, final String description) {
-        return of(Type.INTEGER, name, description);
+    static CommandOption string(final String name, final String description, final boolean required) {
+        return of(Type.STRING, name, description, Optional.of(required), List.of(), List.of());
     }
 
-    static Builder number(final String name, final String description) {
-        return of(Type.NUMBER, name, description);
+    static CommandOption string(
+            final String name, final String description, final boolean required, final Choice... choices) {
+        return of(Type.STRING, name, description, Optional.of(required), List.of(choices), List.of());
     }
 
-    static Builder bool(final String name, final String description) {
-        return of(Type.BOOLEAN, name, description);
+    static CommandOption integer(final String name, final String description) {
+        return of(Type.INTEGER, name, description, Optional.empty(), List.of(), List.of());
     }
 
-    static Builder user(final String name, final String description) {
-        return of(Type.USER, name, description);
+    static CommandOption integer(final String name, final String description, final boolean required) {
+        return of(Type.INTEGER, name, description, Optional.of(required), List.of(), List.of());
     }
 
-    static Builder channel(final String name, final String description) {
-        return of(Type.CHANNEL, name, description);
+    static CommandOption integer(
+            final String name, final String description, final boolean required, final Choice... choices) {
+        return of(Type.INTEGER, name, description, Optional.of(required), List.of(choices), List.of());
     }
 
-    static Builder role(final String name, final String description) {
-        return of(Type.ROLE, name, description);
+    static CommandOption number(final String name, final String description) {
+        return of(Type.NUMBER, name, description, Optional.empty(), List.of(), List.of());
     }
 
-    static Builder mentionable(final String name, final String description) {
-        return of(Type.MENTIONABLE, name, description);
+    static CommandOption number(final String name, final String description, final boolean required) {
+        return of(Type.NUMBER, name, description, Optional.of(required), List.of(), List.of());
     }
 
-    static Builder attachment(final String name, final String description) {
-        return of(Type.ATTACHMENT, name, description);
+    static CommandOption number(
+            final String name, final String description, final boolean required, final Choice... choices) {
+        return of(Type.NUMBER, name, description, Optional.of(required), List.of(choices), List.of());
     }
 
-    static Builder subcommand(final String name, final String description, final CommandOption... options) {
-        return of(Type.SUB_COMMAND, name, description).addOptions(options);
+    static CommandOption bool(final String name, final String description) {
+        return of(Type.BOOLEAN, name, description, Optional.empty(), List.of(), List.of());
     }
 
-    static Builder group(final String name, final String description, final CommandOption... subcommands) {
-        return of(Type.SUB_COMMAND_GROUP, name, description).addOptions(subcommands);
+    static CommandOption bool(final String name, final String description, final boolean required) {
+        return of(Type.BOOLEAN, name, description, Optional.of(required), List.of(), List.of());
     }
 
-    private static Builder of(final Type type, final String name, final String description) {
-        return ImmutableCommandOption.builder().type(type).name(name).description(description);
+    static CommandOption user(final String name, final String description) {
+        return of(Type.USER, name, description, Optional.empty(), List.of(), List.of());
     }
 
+    static CommandOption user(final String name, final String description, final boolean required) {
+        return of(Type.USER, name, description, Optional.of(required), List.of(), List.of());
+    }
+
+    static CommandOption channel(final String name, final String description) {
+        return of(Type.CHANNEL, name, description, Optional.empty(), List.of(), List.of());
+    }
+
+    static CommandOption channel(final String name, final String description, final boolean required) {
+        return of(Type.CHANNEL, name, description, Optional.of(required), List.of(), List.of());
+    }
+
+    static CommandOption role(final String name, final String description) {
+        return of(Type.ROLE, name, description, Optional.empty(), List.of(), List.of());
+    }
+
+    static CommandOption role(final String name, final String description, final boolean required) {
+        return of(Type.ROLE, name, description, Optional.of(required), List.of(), List.of());
+    }
+
+    static CommandOption mentionable(final String name, final String description) {
+        return of(Type.MENTIONABLE, name, description, Optional.empty(), List.of(), List.of());
+    }
+
+    static CommandOption mentionable(final String name, final String description, final boolean required) {
+        return of(Type.MENTIONABLE, name, description, Optional.of(required), List.of(), List.of());
+    }
+
+    static CommandOption attachment(final String name, final String description) {
+        return of(Type.ATTACHMENT, name, description, Optional.empty(), List.of(), List.of());
+    }
+
+    static CommandOption attachment(final String name, final String description, final boolean required) {
+        return of(Type.ATTACHMENT, name, description, Optional.of(required), List.of(), List.of());
+    }
+
+    static CommandOption subcommand(final String name, final String description, final CommandOption... options) {
+        return of(Type.SUB_COMMAND, name, description, Optional.empty(), List.of(), List.of(options));
+    }
+
+    static CommandOption group(final String name, final String description, final CommandOption... subcommands) {
+        return of(Type.SUB_COMMAND_GROUP, name, description, Optional.empty(), List.of(), List.of(subcommands));
+    }
+
+    private static CommandOption of(
+            final Type type,
+            final String name,
+            final String description,
+            final Optional<Boolean> required,
+            final List<Choice> choices,
+            final List<CommandOption> options) {
+        return ImmutableCommandOption.of(type, name, description, required, choices, options);
+    }
+
+    @Value.Parameter
     Type type();
 
+    @Value.Parameter
     String name();
 
+    @Value.Parameter
     String description();
 
+    @Value.Parameter
     Optional<Boolean> required();
 
     /** The only values allowed, up to 25. */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Value.Parameter
     List<Choice> choices();
 
     /** Whether choices come from {@link AutocompleteInteractionEvent}s. Excludes {@link #choices()}. */
@@ -88,6 +151,7 @@ public interface CommandOption {
 
     /** The options of a subcommand, or the subcommands of a group. */
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Value.Parameter
     List<CommandOption> options();
 
     /** Restricts a channel option to these channel types. */
@@ -138,98 +202,79 @@ public interface CommandOption {
         }
 
         static Choice of(final String name, final String value) {
-            return ImmutableCommandOption.Choice.builder()
-                    .name(name)
-                    .value(value)
-                    .build();
+            return ImmutableCommandOption.Choice.of(name, value);
         }
 
         static Choice of(final String name, final long value) {
-            return ImmutableCommandOption.Choice.builder()
-                    .name(name)
-                    .value(value)
-                    .build();
+            return ImmutableCommandOption.Choice.of(name, value);
         }
 
         static Choice of(final String name, final double value) {
-            return ImmutableCommandOption.Choice.builder()
-                    .name(name)
-                    .value(value)
-                    .build();
+            return ImmutableCommandOption.Choice.of(name, value);
         }
 
+        @Value.Parameter
         String name();
 
         /** A string, integer or double, matching the option type. */
+        @Value.Parameter
         Object value();
 
         interface Builder {
-            Builder from(Choice instance);
+            Builder from(final Choice instance);
 
-            Builder name(String name);
+            Builder name(final String name);
 
-            Builder value(Object value);
+            Builder value(final Object value);
 
             Choice build();
         }
     }
 
     interface Builder {
-        Builder from(CommandOption instance);
+        Builder from(final CommandOption instance);
 
-        Builder type(Type type);
+        Builder type(final Type type);
 
-        Builder name(String name);
+        Builder name(final String name);
 
-        Builder description(String description);
+        Builder description(final String description);
 
-        Builder required(boolean required);
+        Builder required(final boolean required);
 
-        Builder required(Optional<Boolean> required);
+        Builder addChoices(final Choice element);
 
-        Builder addChoices(Choice element);
+        Builder addChoices(final Choice... elements);
 
-        Builder addChoices(Choice... elements);
+        Builder choices(final Iterable<? extends Choice> elements);
 
-        Builder choices(Iterable<? extends Choice> elements);
+        Builder addAllChoices(final Iterable<? extends Choice> elements);
 
-        Builder addAllChoices(Iterable<? extends Choice> elements);
+        Builder autocomplete(final boolean autocomplete);
 
-        Builder autocomplete(boolean autocomplete);
+        Builder addOptions(final CommandOption element);
 
-        Builder autocomplete(Optional<Boolean> autocomplete);
+        Builder addOptions(final CommandOption... elements);
 
-        Builder addOptions(CommandOption element);
+        Builder options(final Iterable<? extends CommandOption> elements);
 
-        Builder addOptions(CommandOption... elements);
+        Builder addAllOptions(final Iterable<? extends CommandOption> elements);
 
-        Builder options(Iterable<? extends CommandOption> elements);
+        Builder addChannelTypes(final int element);
 
-        Builder addAllOptions(Iterable<? extends CommandOption> elements);
+        Builder addChannelTypes(final int... elements);
 
-        Builder addChannelTypes(int element);
+        Builder channelTypes(final Iterable<Integer> elements);
 
-        Builder addChannelTypes(int... elements);
+        Builder addAllChannelTypes(final Iterable<Integer> elements);
 
-        Builder channelTypes(Iterable<Integer> elements);
+        Builder minValue(final Number minValue);
 
-        Builder addAllChannelTypes(Iterable<Integer> elements);
+        Builder maxValue(final Number maxValue);
 
-        Builder minValue(Number minValue);
+        Builder minLength(final int minLength);
 
-        Builder minValue(Optional<? extends Number> minValue);
-
-        Builder maxValue(Number maxValue);
-
-        Builder maxValue(Optional<? extends Number> maxValue);
-
-        Builder minLength(int minLength);
-
-        Builder minLength(Optional<Integer> minLength);
-
-        Builder maxLength(int maxLength);
-
-        Builder maxLength(Optional<Integer> maxLength);
+        Builder maxLength(final int maxLength);
 
         CommandOption build();
     }

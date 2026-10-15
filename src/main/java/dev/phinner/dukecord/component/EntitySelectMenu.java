@@ -22,6 +22,10 @@ public non-sealed interface EntitySelectMenu extends Component {
         return ImmutableEntitySelectMenu.builder().type(kind.type);
     }
 
+    static EntitySelectMenu of(final Kind kind, final String customId) {
+        return ImmutableEntitySelectMenu.of(kind.type, customId);
+    }
+
     @JsonIgnore
     default Kind kind() {
         return switch (this.type()) {
@@ -33,6 +37,12 @@ public non-sealed interface EntitySelectMenu extends Component {
         };
     }
 
+    /** One of the {@link Kind} types. */
+    @Override
+    @Value.Parameter(order = 0)
+    int type();
+
+    @Value.Parameter(order = 1)
     String customId();
 
     Optional<String> placeholder();
@@ -83,28 +93,21 @@ public non-sealed interface EntitySelectMenu extends Component {
         }
 
         static DefaultValue user(final Snowflake id) {
-            return ImmutableEntitySelectMenu.DefaultValue.builder()
-                    .id(id)
-                    .type(Type.USER)
-                    .build();
+            return ImmutableEntitySelectMenu.DefaultValue.of(id, Type.USER);
         }
 
         static DefaultValue role(final Snowflake id) {
-            return ImmutableEntitySelectMenu.DefaultValue.builder()
-                    .id(id)
-                    .type(Type.ROLE)
-                    .build();
+            return ImmutableEntitySelectMenu.DefaultValue.of(id, Type.ROLE);
         }
 
         static DefaultValue channel(final Snowflake id) {
-            return ImmutableEntitySelectMenu.DefaultValue.builder()
-                    .id(id)
-                    .type(Type.CHANNEL)
-                    .build();
+            return ImmutableEntitySelectMenu.DefaultValue.of(id, Type.CHANNEL);
         }
 
+        @Value.Parameter
         Snowflake id();
 
+        @Value.Parameter
         Type type();
 
         enum Type {
@@ -119,68 +122,58 @@ public non-sealed interface EntitySelectMenu extends Component {
         }
 
         interface Builder {
-            Builder from(DefaultValue instance);
+            Builder from(final DefaultValue instance);
 
-            Builder id(Snowflake id);
+            Builder id(final Snowflake id);
 
-            Builder type(DefaultValue.Type type);
+            Builder type(final DefaultValue.Type type);
 
             DefaultValue build();
         }
     }
 
     interface Builder {
-        Builder from(EntitySelectMenu instance);
+        Builder from(final EntitySelectMenu instance);
 
-        Builder type(int type);
+        Builder id(final int id);
 
-        Builder id(int id);
+        Builder type(final int type);
 
-        Builder id(Optional<Integer> id);
+        Builder customId(final String customId);
 
-        Builder customId(String customId);
+        Builder placeholder(final String placeholder);
 
-        Builder placeholder(String placeholder);
+        Builder minValues(final int minValues);
 
-        Builder placeholder(Optional<String> placeholder);
+        Builder maxValues(final int maxValues);
 
-        Builder minValues(int minValues);
+        Builder required(final boolean required);
 
-        Builder minValues(Optional<Integer> minValues);
+        Builder disabled(final boolean disabled);
 
-        Builder maxValues(int maxValues);
+        Builder addChannelTypes(final int element);
 
-        Builder maxValues(Optional<Integer> maxValues);
+        Builder addChannelTypes(final int... elements);
 
-        Builder required(boolean required);
+        Builder channelTypes(final Iterable<Integer> elements);
 
-        Builder required(Optional<Boolean> required);
+        Builder addAllChannelTypes(final Iterable<Integer> elements);
 
-        Builder disabled(boolean disabled);
+        Builder addDefaultValues(final DefaultValue element);
 
-        Builder addChannelTypes(int element);
+        Builder addDefaultValues(final DefaultValue... elements);
 
-        Builder addChannelTypes(int... elements);
+        Builder defaultValues(final Iterable<? extends DefaultValue> elements);
 
-        Builder channelTypes(Iterable<Integer> elements);
+        Builder addAllDefaultValues(final Iterable<? extends DefaultValue> elements);
 
-        Builder addAllChannelTypes(Iterable<Integer> elements);
+        Builder addValues(final Snowflake element);
 
-        Builder addDefaultValues(DefaultValue element);
+        Builder addValues(final Snowflake... elements);
 
-        Builder addDefaultValues(DefaultValue... elements);
+        Builder values(final Iterable<? extends Snowflake> elements);
 
-        Builder defaultValues(Iterable<? extends DefaultValue> elements);
-
-        Builder addAllDefaultValues(Iterable<? extends DefaultValue> elements);
-
-        Builder addValues(Snowflake element);
-
-        Builder addValues(Snowflake... elements);
-
-        Builder values(Iterable<? extends Snowflake> elements);
-
-        Builder addAllValues(Iterable<? extends Snowflake> elements);
+        Builder addAllValues(final Iterable<? extends Snowflake> elements);
 
         EntitySelectMenu build();
     }

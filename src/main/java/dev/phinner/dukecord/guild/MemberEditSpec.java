@@ -39,31 +39,19 @@ public interface MemberEditSpec {
     Optional<Snowflake> channelId();
 
     interface Builder {
-        Builder from(MemberEditSpec instance);
+        Builder from(final MemberEditSpec instance);
 
-        Builder nick(String nick);
+        Builder nick(final String nick);
 
-        Builder nick(Optional<String> nick);
+        Builder roles(final List<Snowflake> roles);
 
-        Builder roles(List<Snowflake> roles);
+        Builder communicationDisabledUntil(final Instant communicationDisabledUntil);
 
-        Builder roles(Optional<? extends List<Snowflake>> roles);
+        Builder mute(final boolean mute);
 
-        Builder communicationDisabledUntil(Instant communicationDisabledUntil);
+        Builder deaf(final boolean deaf);
 
-        Builder communicationDisabledUntil(Optional<? extends Instant> communicationDisabledUntil);
-
-        Builder mute(boolean mute);
-
-        Builder mute(Optional<Boolean> mute);
-
-        Builder deaf(boolean deaf);
-
-        Builder deaf(Optional<Boolean> deaf);
-
-        Builder channelId(Snowflake channelId);
-
-        Builder channelId(Optional<? extends Snowflake> channelId);
+        Builder channelId(final Snowflake channelId);
 
         MemberEditSpec build();
     }

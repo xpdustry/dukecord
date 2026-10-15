@@ -17,33 +17,32 @@ public interface ModalSpec {
     }
 
     static ModalSpec of(final String customId, final String title, final Component... components) {
-        return ImmutableModalSpec.builder()
-                .customId(customId)
-                .title(title)
-                .addComponents(components)
-                .build();
+        return ImmutableModalSpec.of(customId, title, List.of(components));
     }
 
+    @Value.Parameter
     String customId();
 
+    @Value.Parameter
     String title();
 
+    @Value.Parameter
     List<Component> components();
 
     interface Builder {
-        Builder from(ModalSpec instance);
+        Builder from(final ModalSpec instance);
 
-        Builder customId(String customId);
+        Builder customId(final String customId);
 
-        Builder title(String title);
+        Builder title(final String title);
 
-        Builder addComponents(Component element);
+        Builder addComponents(final Component element);
 
-        Builder addComponents(Component... elements);
+        Builder addComponents(final Component... elements);
 
-        Builder components(Iterable<? extends Component> elements);
+        Builder components(final Iterable<? extends Component> elements);
 
-        Builder addAllComponents(Iterable<? extends Component> elements);
+        Builder addAllComponents(final Iterable<? extends Component> elements);
 
         ModalSpec build();
     }

@@ -9,8 +9,8 @@ import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
- * A text field in a modal, wrapped in a {@link Label}. The factories return the immutable type so that attributes
- * chain, as in {@code TextInput.singleLine("name").withRequired(true)}.
+ * A text field in a modal, wrapped in a {@link Label}, as in
+ * {@code Label.of("Name", TextInput.singleLine("name", true))}.
  */
 @Value.Immutable
 @JsonDeserialize(as = ImmutableTextInput.class)
@@ -20,12 +20,20 @@ public non-sealed interface TextInput extends Component {
         return ImmutableTextInput.builder();
     }
 
-    static Builder singleLine(final String customId) {
-        return builder().customId(customId).style(Style.SHORT);
+    static TextInput singleLine(final String customId) {
+        return ImmutableTextInput.of(customId, Style.SHORT, Optional.empty());
     }
 
-    static Builder paragraph(final String customId) {
-        return builder().customId(customId).style(Style.PARAGRAPH);
+    static TextInput singleLine(final String customId, final boolean required) {
+        return ImmutableTextInput.of(customId, Style.SHORT, Optional.of(required));
+    }
+
+    static TextInput paragraph(final String customId) {
+        return ImmutableTextInput.of(customId, Style.PARAGRAPH, Optional.empty());
+    }
+
+    static TextInput paragraph(final String customId, final boolean required) {
+        return ImmutableTextInput.of(customId, Style.PARAGRAPH, Optional.of(required));
     }
 
     @Override
@@ -34,10 +42,12 @@ public non-sealed interface TextInput extends Component {
         return 4;
     }
 
+    @Value.Parameter
     String customId();
 
     /** Not sent back in a submitted modal. */
     @Value.Default
+    @Value.Parameter
     default Style style() {
         return Style.SHORT;
     }
@@ -47,6 +57,7 @@ public non-sealed interface TextInput extends Component {
 
     Optional<String> placeholder();
 
+    @Value.Parameter
     Optional<Boolean> required();
 
     Optional<Integer> minLength();
@@ -72,35 +83,23 @@ public non-sealed interface TextInput extends Component {
     }
 
     interface Builder {
-        Builder from(TextInput instance);
+        Builder from(final TextInput instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder customId(final String customId);
 
-        Builder customId(String customId);
+        Builder style(final Style style);
 
-        Builder style(Style style);
+        Builder value(final String value);
 
-        Builder value(String value);
+        Builder placeholder(final String placeholder);
 
-        Builder value(Optional<String> value);
+        Builder required(final boolean required);
 
-        Builder placeholder(String placeholder);
+        Builder minLength(final int minLength);
 
-        Builder placeholder(Optional<String> placeholder);
-
-        Builder required(boolean required);
-
-        Builder required(Optional<Boolean> required);
-
-        Builder minLength(int minLength);
-
-        Builder minLength(Optional<Integer> minLength);
-
-        Builder maxLength(int maxLength);
-
-        Builder maxLength(Optional<Integer> maxLength);
+        Builder maxLength(final int maxLength);
 
         TextInput build();
     }

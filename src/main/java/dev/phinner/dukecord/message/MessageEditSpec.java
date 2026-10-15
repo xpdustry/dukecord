@@ -24,9 +24,10 @@ public interface MessageEditSpec {
     }
 
     static MessageEditSpec of(final String content) {
-        return builder().content(content).build();
+        return ImmutableMessageEditSpec.of(Optional.of(content));
     }
 
+    @Value.Parameter
     Optional<String> content();
 
     Optional<List<Embed>> embeds();
@@ -53,37 +54,27 @@ public interface MessageEditSpec {
     Optional<List<Snowflake>> retainedAttachments();
 
     interface Builder {
-        Builder from(MessageEditSpec instance);
+        Builder from(final MessageEditSpec instance);
 
-        Builder content(String content);
+        Builder content(final String content);
 
-        Builder content(Optional<String> content);
+        Builder embeds(final List<Embed> embeds);
 
-        Builder embeds(List<Embed> embeds);
+        Builder components(final List<Component> components);
 
-        Builder embeds(Optional<? extends List<Embed>> embeds);
+        Builder allowedMentions(final AllowedMentions allowedMentions);
 
-        Builder components(List<Component> components);
+        Builder flags(final Set<MessageFlag> flags);
 
-        Builder components(Optional<? extends List<Component>> components);
+        Builder addFiles(final FileUpload element);
 
-        Builder allowedMentions(AllowedMentions allowedMentions);
+        Builder addFiles(final FileUpload... elements);
 
-        Builder flags(Set<MessageFlag> flags);
+        Builder files(final Iterable<? extends FileUpload> elements);
 
-        Builder flags(Optional<? extends Set<MessageFlag>> flags);
+        Builder addAllFiles(final Iterable<? extends FileUpload> elements);
 
-        Builder addFiles(FileUpload element);
-
-        Builder addFiles(FileUpload... elements);
-
-        Builder files(Iterable<? extends FileUpload> elements);
-
-        Builder addAllFiles(Iterable<? extends FileUpload> elements);
-
-        Builder retainedAttachments(List<Snowflake> retainedAttachments);
-
-        Builder retainedAttachments(Optional<? extends List<Snowflake>> retainedAttachments);
+        Builder retainedAttachments(final List<Snowflake> retainedAttachments);
 
         MessageEditSpec build();
     }

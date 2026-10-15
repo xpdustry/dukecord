@@ -18,9 +18,10 @@ public interface UnfurledMedia {
 
     /** Takes a web URL or {@code attachment://filename}. */
     static UnfurledMedia of(final String url) {
-        return ImmutableUnfurledMedia.builder().url(url).build();
+        return ImmutableUnfurledMedia.of(url);
     }
 
+    @Value.Parameter
     String url();
 
     Optional<String> proxyUrl();
@@ -34,29 +35,19 @@ public interface UnfurledMedia {
     Optional<Snowflake> attachmentId();
 
     interface Builder {
-        Builder from(UnfurledMedia instance);
+        Builder from(final UnfurledMedia instance);
 
-        Builder url(String url);
+        Builder url(final String url);
 
-        Builder proxyUrl(String proxyUrl);
+        Builder proxyUrl(final String proxyUrl);
 
-        Builder proxyUrl(Optional<String> proxyUrl);
+        Builder width(final int width);
 
-        Builder width(int width);
+        Builder height(final int height);
 
-        Builder width(Optional<Integer> width);
+        Builder contentType(final String contentType);
 
-        Builder height(int height);
-
-        Builder height(Optional<Integer> height);
-
-        Builder contentType(String contentType);
-
-        Builder contentType(Optional<String> contentType);
-
-        Builder attachmentId(Snowflake attachmentId);
-
-        Builder attachmentId(Optional<? extends Snowflake> attachmentId);
+        Builder attachmentId(final Snowflake attachmentId);
 
         UnfurledMedia build();
     }

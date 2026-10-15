@@ -8,12 +8,12 @@ import java.util.Set;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonSerialize;
 
-@Value.Immutable
+@Value.Immutable(singleton = true)
 @JsonSerialize(as = ImmutableAllowedMentions.class)
 public interface AllowedMentions {
 
     static AllowedMentions none() {
-        return builder().build();
+        return ImmutableAllowedMentions.of();
     }
 
     static Builder builder() {
@@ -41,33 +41,33 @@ public interface AllowedMentions {
     }
 
     interface Builder {
-        Builder from(AllowedMentions instance);
+        Builder from(final AllowedMentions instance);
 
-        Builder addParse(Type element);
+        Builder addParse(final Type element);
 
-        Builder addParse(Type... elements);
+        Builder addParse(final Type... elements);
 
-        Builder parse(Iterable<Type> elements);
+        Builder parse(final Iterable<Type> elements);
 
-        Builder addAllParse(Iterable<Type> elements);
+        Builder addAllParse(final Iterable<Type> elements);
 
-        Builder addUsers(Snowflake element);
+        Builder addUsers(final Snowflake element);
 
-        Builder addUsers(Snowflake... elements);
+        Builder addUsers(final Snowflake... elements);
 
-        Builder users(Iterable<? extends Snowflake> elements);
+        Builder users(final Iterable<? extends Snowflake> elements);
 
-        Builder addAllUsers(Iterable<? extends Snowflake> elements);
+        Builder addAllUsers(final Iterable<? extends Snowflake> elements);
 
-        Builder addRoles(Snowflake element);
+        Builder addRoles(final Snowflake element);
 
-        Builder addRoles(Snowflake... elements);
+        Builder addRoles(final Snowflake... elements);
 
-        Builder roles(Iterable<? extends Snowflake> elements);
+        Builder roles(final Iterable<? extends Snowflake> elements);
 
-        Builder addAllRoles(Iterable<? extends Snowflake> elements);
+        Builder addAllRoles(final Iterable<? extends Snowflake> elements);
 
-        Builder repliedUser(boolean repliedUser);
+        Builder repliedUser(final boolean repliedUser);
 
         AllowedMentions build();
     }

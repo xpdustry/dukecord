@@ -48,9 +48,10 @@ public interface Embed {
         }
 
         static Author of(final String name) {
-            return ImmutableEmbed.Author.builder().name(name).build();
+            return ImmutableEmbed.Author.of(name);
         }
 
+        @Value.Parameter
         String name();
 
         Optional<String> url();
@@ -60,21 +61,15 @@ public interface Embed {
         Optional<String> proxyIconUrl();
 
         interface Builder {
-            Builder from(Author instance);
+            Builder from(final Author instance);
 
-            Builder name(String name);
+            Builder name(final String name);
 
-            Builder url(String url);
+            Builder url(final String url);
 
-            Builder url(Optional<String> url);
+            Builder iconUrl(final String iconUrl);
 
-            Builder iconUrl(String iconUrl);
-
-            Builder iconUrl(Optional<String> iconUrl);
-
-            Builder proxyIconUrl(String proxyIconUrl);
-
-            Builder proxyIconUrl(Optional<String> proxyIconUrl);
+            Builder proxyIconUrl(final String proxyIconUrl);
 
             Author build();
         }
@@ -93,30 +88,29 @@ public interface Embed {
         }
 
         static Field of(final String name, final String value, final boolean inline) {
-            return ImmutableEmbed.Field.builder()
-                    .name(name)
-                    .value(value)
-                    .inline(inline)
-                    .build();
+            return ImmutableEmbed.Field.of(name, value, inline);
         }
 
+        @Value.Parameter
         String name();
 
+        @Value.Parameter
         String value();
 
         @Value.Default
+        @Value.Parameter
         default boolean inline() {
             return false;
         }
 
         interface Builder {
-            Builder from(Field instance);
+            Builder from(final Field instance);
 
-            Builder name(String name);
+            Builder name(final String name);
 
-            Builder value(String value);
+            Builder value(final String value);
 
-            Builder inline(boolean inline);
+            Builder inline(final boolean inline);
 
             Field build();
         }
@@ -133,9 +127,10 @@ public interface Embed {
 
         /** Takes a web URL or {@code attachment://filename}. */
         static Media of(final String url) {
-            return ImmutableEmbed.Media.builder().url(url).build();
+            return ImmutableEmbed.Media.of(url);
         }
 
+        @Value.Parameter
         String url();
 
         Optional<String> proxyUrl();
@@ -145,21 +140,15 @@ public interface Embed {
         Optional<Integer> height();
 
         interface Builder {
-            Builder from(Media instance);
+            Builder from(final Media instance);
 
-            Builder url(String url);
+            Builder url(final String url);
 
-            Builder proxyUrl(String proxyUrl);
+            Builder proxyUrl(final String proxyUrl);
 
-            Builder proxyUrl(Optional<String> proxyUrl);
+            Builder width(final int width);
 
-            Builder width(int width);
-
-            Builder width(Optional<Integer> width);
-
-            Builder height(int height);
-
-            Builder height(Optional<Integer> height);
+            Builder height(final int height);
 
             Media build();
         }
@@ -174,9 +163,10 @@ public interface Embed {
         }
 
         static Footer of(final String text) {
-            return ImmutableEmbed.Footer.builder().text(text).build();
+            return ImmutableEmbed.Footer.of(text);
         }
 
+        @Value.Parameter
         String text();
 
         Optional<String> iconUrl();
@@ -184,68 +174,46 @@ public interface Embed {
         Optional<String> proxyIconUrl();
 
         interface Builder {
-            Builder from(Footer instance);
+            Builder from(final Footer instance);
 
-            Builder text(String text);
+            Builder text(final String text);
 
-            Builder iconUrl(String iconUrl);
+            Builder iconUrl(final String iconUrl);
 
-            Builder iconUrl(Optional<String> iconUrl);
-
-            Builder proxyIconUrl(String proxyIconUrl);
-
-            Builder proxyIconUrl(Optional<String> proxyIconUrl);
+            Builder proxyIconUrl(final String proxyIconUrl);
 
             Footer build();
         }
     }
 
     interface Builder {
-        Builder from(Embed instance);
+        Builder from(final Embed instance);
 
-        Builder title(String title);
+        Builder title(final String title);
 
-        Builder title(Optional<String> title);
+        Builder description(final String description);
 
-        Builder description(String description);
+        Builder url(final String url);
 
-        Builder description(Optional<String> description);
+        Builder timestamp(final Instant timestamp);
 
-        Builder url(String url);
+        Builder color(final Color color);
 
-        Builder url(Optional<String> url);
+        Builder author(final Author author);
 
-        Builder timestamp(Instant timestamp);
+        Builder addFields(final Field element);
 
-        Builder timestamp(Optional<? extends Instant> timestamp);
+        Builder addFields(final Field... elements);
 
-        Builder color(Color color);
+        Builder fields(final Iterable<? extends Field> elements);
 
-        Builder color(Optional<? extends Color> color);
+        Builder addAllFields(final Iterable<? extends Field> elements);
 
-        Builder author(Author author);
+        Builder image(final Media image);
 
-        Builder author(Optional<? extends Author> author);
+        Builder thumbnail(final Media thumbnail);
 
-        Builder addFields(Field element);
-
-        Builder addFields(Field... elements);
-
-        Builder fields(Iterable<? extends Field> elements);
-
-        Builder addAllFields(Iterable<? extends Field> elements);
-
-        Builder image(Media image);
-
-        Builder image(Optional<? extends Media> image);
-
-        Builder thumbnail(Media thumbnail);
-
-        Builder thumbnail(Optional<? extends Media> thumbnail);
-
-        Builder footer(Footer footer);
-
-        Builder footer(Optional<? extends Footer> footer);
+        Builder footer(final Footer footer);
 
         Embed build();
     }

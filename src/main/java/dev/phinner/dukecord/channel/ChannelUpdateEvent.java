@@ -10,6 +10,6 @@ public interface ChannelUpdateEvent extends ChannelEvent {
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     static ChannelUpdateEvent of(final Channel channel) {
-        return ImmutableChannelUpdateEvent.builder().channel(channel).build();
+        return ImmutableChannelUpdateEvent.of(channel);
     }
 }

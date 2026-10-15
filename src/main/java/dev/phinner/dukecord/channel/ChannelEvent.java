@@ -8,6 +8,7 @@ import org.immutables.value.Value;
 
 public interface ChannelEvent extends DiscordGatewayEvent {
 
+    @Value.Parameter
     Channel channel();
 
     @Value.Derived

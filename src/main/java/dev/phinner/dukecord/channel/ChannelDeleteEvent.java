@@ -10,6 +10,6 @@ public interface ChannelDeleteEvent extends ChannelEvent {
 
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     static ChannelDeleteEvent of(final Channel channel) {
-        return ImmutableChannelDeleteEvent.builder().channel(channel).build();
+        return ImmutableChannelDeleteEvent.of(channel);
     }
 }

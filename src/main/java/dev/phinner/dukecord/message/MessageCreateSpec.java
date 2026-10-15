@@ -21,14 +21,15 @@ public interface MessageCreateSpec {
     }
 
     static MessageCreateSpec of(final String content) {
-        return builder().content(content).build();
+        return ImmutableMessageCreateSpec.of(Optional.of(content), Set.of());
     }
 
     /** Only for interaction replies and follow-ups. */
     static MessageCreateSpec ephemeral(final String content) {
-        return builder().content(content).addFlags(MessageFlag.EPHEMERAL).build();
+        return ImmutableMessageCreateSpec.of(Optional.of(content), Set.of(MessageFlag.EPHEMERAL));
     }
 
+    @Value.Parameter
     Optional<String> content();
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -53,54 +54,51 @@ public interface MessageCreateSpec {
     }
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)
+    @Value.Parameter
     Set<MessageFlag> flags();
 
     interface Builder {
-        Builder from(MessageCreateSpec instance);
+        Builder from(final MessageCreateSpec instance);
 
-        Builder content(String content);
+        Builder content(final String content);
 
-        Builder content(Optional<String> content);
+        Builder addEmbeds(final Embed element);
 
-        Builder addEmbeds(Embed element);
+        Builder addEmbeds(final Embed... elements);
 
-        Builder addEmbeds(Embed... elements);
+        Builder embeds(final Iterable<? extends Embed> elements);
 
-        Builder embeds(Iterable<? extends Embed> elements);
+        Builder addAllEmbeds(final Iterable<? extends Embed> elements);
 
-        Builder addAllEmbeds(Iterable<? extends Embed> elements);
+        Builder addComponents(final Component element);
 
-        Builder addComponents(Component element);
+        Builder addComponents(final Component... elements);
 
-        Builder addComponents(Component... elements);
+        Builder components(final Iterable<? extends Component> elements);
 
-        Builder components(Iterable<? extends Component> elements);
+        Builder addAllComponents(final Iterable<? extends Component> elements);
 
-        Builder addAllComponents(Iterable<? extends Component> elements);
+        Builder addFiles(final FileUpload element);
 
-        Builder addFiles(FileUpload element);
+        Builder addFiles(final FileUpload... elements);
 
-        Builder addFiles(FileUpload... elements);
+        Builder files(final Iterable<? extends FileUpload> elements);
 
-        Builder files(Iterable<? extends FileUpload> elements);
+        Builder addAllFiles(final Iterable<? extends FileUpload> elements);
 
-        Builder addAllFiles(Iterable<? extends FileUpload> elements);
+        Builder allowedMentions(final AllowedMentions allowedMentions);
 
-        Builder allowedMentions(AllowedMentions allowedMentions);
+        Builder messageReference(final MessageReference messageReference);
 
-        Builder messageReference(MessageReference messageReference);
+        Builder tts(final boolean tts);
 
-        Builder messageReference(Optional<? extends MessageReference> messageReference);
+        Builder addFlags(final MessageFlag element);
 
-        Builder tts(boolean tts);
+        Builder addFlags(final MessageFlag... elements);
 
-        Builder addFlags(MessageFlag element);
+        Builder flags(final Iterable<MessageFlag> elements);
 
-        Builder addFlags(MessageFlag... elements);
-
-        Builder flags(Iterable<MessageFlag> elements);
-
-        Builder addAllFlags(Iterable<MessageFlag> elements);
+        Builder addAllFlags(final Iterable<MessageFlag> elements);
 
         MessageCreateSpec build();
     }

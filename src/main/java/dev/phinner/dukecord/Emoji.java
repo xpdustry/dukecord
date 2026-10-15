@@ -16,40 +16,39 @@ public interface Emoji {
     }
 
     static Emoji unicode(final String emoji) {
-        return ImmutableEmoji.builder().name(emoji).build();
+        return ImmutableEmoji.of(Optional.empty(), Optional.of(emoji), false);
     }
 
     static Emoji custom(final Snowflake id, final String name) {
-        return ImmutableEmoji.builder().id(id).name(name).build();
+        return custom(id, name, false);
     }
 
     static Emoji custom(final Snowflake id, final String name, final boolean animated) {
-        return ImmutableEmoji.builder().id(id).name(name).animated(animated).build();
+        return ImmutableEmoji.of(Optional.of(id), Optional.of(name), animated);
     }
 
     /** Absent for unicode emojis. */
+    @Value.Parameter
     Optional<Snowflake> id();
 
     /** The unicode emoji itself, or the custom emoji's name. Absent when the custom emoji was deleted. */
+    @Value.Parameter
     Optional<String> name();
 
     @Value.Default
+    @Value.Parameter
     default boolean animated() {
         return false;
     }
 
     interface Builder {
-        Builder from(Emoji instance);
+        Builder from(final Emoji instance);
 
-        Builder id(Snowflake id);
+        Builder id(final Snowflake id);
 
-        Builder id(Optional<? extends Snowflake> id);
+        Builder name(final String name);
 
-        Builder name(String name);
-
-        Builder name(Optional<String> name);
-
-        Builder animated(boolean animated);
+        Builder animated(final boolean animated);
 
         Emoji build();
     }

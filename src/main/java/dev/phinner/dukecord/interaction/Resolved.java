@@ -14,12 +14,12 @@ import tools.jackson.databind.annotation.JsonDeserialize;
  * The objects behind the IDs in options and select values. Discord also sends partial members, channels and messages,
  * which are left out; use their IDs instead.
  */
-@Value.Immutable
+@Value.Immutable(singleton = true)
 @JsonDeserialize(as = ImmutableResolved.class)
 public interface Resolved {
 
     static Resolved empty() {
-        return ImmutableResolved.builder().build();
+        return ImmutableResolved.of();
     }
 
     Map<Snowflake, User> users();

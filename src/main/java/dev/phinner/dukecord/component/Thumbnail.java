@@ -15,7 +15,7 @@ public non-sealed interface Thumbnail extends Component {
     }
 
     static Thumbnail of(final String url) {
-        return ImmutableThumbnail.builder().media(UnfurledMedia.of(url)).build();
+        return ImmutableThumbnail.of(UnfurledMedia.of(url));
     }
 
     @Override
@@ -24,6 +24,7 @@ public non-sealed interface Thumbnail extends Component {
         return 11;
     }
 
+    @Value.Parameter
     UnfurledMedia media();
 
     Optional<String> description();
@@ -34,19 +35,15 @@ public non-sealed interface Thumbnail extends Component {
     }
 
     interface Builder {
-        Builder from(Thumbnail instance);
+        Builder from(final Thumbnail instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder media(final UnfurledMedia media);
 
-        Builder media(UnfurledMedia media);
+        Builder description(final String description);
 
-        Builder description(String description);
-
-        Builder description(Optional<String> description);
-
-        Builder spoiler(boolean spoiler);
+        Builder spoiler(final boolean spoiler);
 
         Thumbnail build();
     }

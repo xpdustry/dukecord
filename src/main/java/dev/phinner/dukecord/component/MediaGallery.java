@@ -4,6 +4,7 @@ package dev.phinner.dukecord.component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -18,11 +19,7 @@ public non-sealed interface MediaGallery extends Component {
     }
 
     static MediaGallery of(final String... urls) {
-        final var builder = ImmutableMediaGallery.builder();
-        for (final var url : urls) {
-            builder.addItems(Item.of(url));
-        }
-        return builder.build();
+        return ImmutableMediaGallery.of(Stream.of(urls).map(Item::of).toList());
     }
 
     @Override
@@ -31,6 +28,7 @@ public non-sealed interface MediaGallery extends Component {
         return 12;
     }
 
+    @Value.Parameter
     List<Item> items();
 
     @Value.Immutable
@@ -42,11 +40,10 @@ public non-sealed interface MediaGallery extends Component {
         }
 
         static Item of(final String url) {
-            return ImmutableMediaGallery.Item.builder()
-                    .media(UnfurledMedia.of(url))
-                    .build();
+            return ImmutableMediaGallery.Item.of(UnfurledMedia.of(url));
         }
 
+        @Value.Parameter
         UnfurledMedia media();
 
         Optional<String> description();
@@ -57,34 +54,30 @@ public non-sealed interface MediaGallery extends Component {
         }
 
         interface Builder {
-            Builder from(Item instance);
+            Builder from(final Item instance);
 
-            Builder media(UnfurledMedia media);
+            Builder media(final UnfurledMedia media);
 
-            Builder description(String description);
+            Builder description(final String description);
 
-            Builder description(Optional<String> description);
-
-            Builder spoiler(boolean spoiler);
+            Builder spoiler(final boolean spoiler);
 
             Item build();
         }
     }
 
     interface Builder {
-        Builder from(MediaGallery instance);
+        Builder from(final MediaGallery instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder addItems(final Item element);
 
-        Builder addItems(Item element);
+        Builder addItems(final Item... elements);
 
-        Builder addItems(Item... elements);
+        Builder items(final Iterable<? extends Item> elements);
 
-        Builder items(Iterable<? extends Item> elements);
-
-        Builder addAllItems(Iterable<? extends Item> elements);
+        Builder addAllItems(final Iterable<? extends Item> elements);
 
         MediaGallery build();
     }

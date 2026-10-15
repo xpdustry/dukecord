@@ -2,7 +2,6 @@
 // SPDX-FileCopyrightText: 2026 phinner
 package dev.phinner.dukecord.component;
 
-import java.util.Optional;
 import org.immutables.value.Value;
 import tools.jackson.databind.annotation.JsonDeserialize;
 
@@ -17,7 +16,7 @@ public non-sealed interface FileDisplay extends Component {
 
     /** Takes the {@code attachment://filename} form of a file uploaded with the message. */
     static FileDisplay of(final String url) {
-        return ImmutableFileDisplay.builder().file(UnfurledMedia.of(url)).build();
+        return ImmutableFileDisplay.of(UnfurledMedia.of(url));
     }
 
     @Override
@@ -26,6 +25,7 @@ public non-sealed interface FileDisplay extends Component {
         return 13;
     }
 
+    @Value.Parameter
     UnfurledMedia file();
 
     @Value.Default
@@ -34,15 +34,13 @@ public non-sealed interface FileDisplay extends Component {
     }
 
     interface Builder {
-        Builder from(FileDisplay instance);
+        Builder from(final FileDisplay instance);
 
-        Builder id(int id);
+        Builder id(final int id);
 
-        Builder id(Optional<Integer> id);
+        Builder file(final UnfurledMedia file);
 
-        Builder file(UnfurledMedia file);
-
-        Builder spoiler(boolean spoiler);
+        Builder spoiler(final boolean spoiler);
 
         FileDisplay build();
     }
